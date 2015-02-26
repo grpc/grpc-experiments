@@ -74,13 +74,19 @@ def guide_list_features(stub):
   for feature in features:
     print "Feature called %s at %s" % (feature.name, feature.location)
 
-def guide_record_route(stub):
 
-  points = []
+def generate_route():
   for i in range(0, 10):
-    points.append(make_point(i,i))
-  route_summary = stub.RecordRoute(iter(points), _TIMEOUT_SECONDS)
+    yield make_point(0,i) #TODO:
 
+
+def guide_record_route(stub):
+  route_iter = generate_route()
+  route_summary = stub.RecordRoute(iter([]), _TIMEOUT_SECONDS)
+  print "Finished trip with %s points " % route_summary.point_count
+  print "Passed %s features " % route_summary.feature_count
+  print "Travelled %s meters " % route_summary.distance
+  print "It took %s seconds " % route_summary.elapsed_time
 
 def guide_route_chat(stub):
 
@@ -104,7 +110,7 @@ def run():
     print "-------------- ListFeatures --------------"
     guide_list_features(stub);
     print "-------------- RecordRoute --------------"
-    #guide_record_route(stub);
+    guide_record_route(stub);
     print "-------------- RouteChat --------------"
     guide_route_chat(stub);
 

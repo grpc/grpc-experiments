@@ -31,6 +31,7 @@
 
 import json
 import time
+from math import sqrt, radians, sin, cos, atan2
 
 import route_guide_pb2
 
@@ -39,35 +40,89 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 def read_route_guide_db():
   """Reads the route guide"""
+  db = []
   with open("route_guide_db.json") as f:
-    return json.load(f)
+    for item in json.load(f):
+      feature = route_guide_pb2.Feature(name = item["name"])
+      feature.location.longitude = item["location"]["longitude"]
+      feature.location.latitude = item["location"]["latitude"]
+      db.append(feature)
+  return db
 
+
+def get_feature(feature_db, point):
+  """Returns feature at given location or None"""
+  for feature in feature_db:
+    if feature.location.latitude == point.latitude and feature.location.longitude == point.longitude:
+      return feature
+  return None
+
+
+def get_distance(start, end):
+  """Distance between two points"""
+  coord_factor = 10000000.0
+  lat_1 = start.latitude / coord_factor
+  lat_2 = end.latitude / coord_factor
+  lon_1 = start.latitude / coord_factor
+  lon_2 = end.longitude / coord_factor
+  lat_rad_1 = radians(lat_1)
+  lat_rad_2 = radians(lat_2)
+  delta_lat_rad = radians(lat_2 - lat_1)
+  delta_lon_rad = radians(lon_2 - lon_1)
+
+  a = pow(sin(delta_lat_rad/2), 2) + cos(lat_rad_1) * cos(lat_rad_2) * pow(sin(delta_lon_rad/2), 2)
+  c = 2 * atan2(sqrt(a), sqrt(1-a))
+  R = 6371000; # metres
+  return R * c;
 
 class RouteGuideServicer(route_guide_pb2.EarlyAdopterRouteGuideServicer):
+  """Provides methods that implement functionality of route guide server."""
 
   def __init__(self):
       self.db = read_route_guide_db()
 
   def GetFeature(self, request, context):
-    response = route_guide_pb2.Feature()
-    response.name = ""
-    for db_item in self.db:
-      location = db_item["location"]
-      if location["latitude"] == request.latitude and location["longitude"] == request.longitude:
-        response.name = db_item["name"]
-    response.location.longitude = request.longitude;
-    response.location.latitude = request.latitude;
-    return response
+    feature = get_feature(self.db, request)
+    if not feature:
+      feature = route_guide_pb2.Feature(name = "")
+      feature.location.longitude = request.longitude
+      feature.location.latitude = request.latitude
+    return feature
 
   def ListFeatures(self, request, context):
-    # TODO: return some features...
-    return iter([])
+    lo = request.lo
+    hi = request.hi
+    left = min(lo.longitude, hi.longitude)
+    right = max(lo.longitude, hi.longitude)
+    top = max(lo.latitude, hi.latitude)
+    bottom = min(lo.latitude, hi.latitude)
+    for f in self.db:
+      if (f.location.longitude >= left and
+          f.location.longitude <= right and
+          f.location.latitude >= bottom and
+          f.location.latitude <= top):
+        yield f
 
-  def RecordRoute(self, requests, context):
-    # TODO: provide real implementation....
-    for req in requests:
-      pass
-    return route_guide_pb2.RouteSummary()
+  def RecordRoute(self, request_iterator, context):
+    point_count = 0
+    feature_count = 0
+    distance = 0.0
+    prev_point = None
+
+    start_time = time.time()
+    for point in request_iterator:
+      point_count += 1
+      if get_feature(self.db, point):
+        feature_count += 1
+      if prev_point:
+        distance += get_distance(previous, point)
+      prev_point = point
+
+    elapsed_time = time.time() - start_time
+    return route_guide_pb2.RouteSummary(point_count = point_count,
+                                        feature_count = feature_count,
+                                        distance = distance,
+                                        elapsed_time = elapsed_time)
 
   def RouteChat(self, request_iterator, context):
     received_notes = []
