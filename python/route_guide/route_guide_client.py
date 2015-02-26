@@ -40,14 +40,14 @@ _TIMEOUT_SECONDS = 30
 
 def read_route_guide_db():
   """Reads the route guide"""
-  db = []
+  feature_list = []
   with open("route_guide_db.json") as route_guide_db_file:
     for item in json.load(route_guide_db_file):
       feature = route_guide_pb2.Feature(name=item["name"])
       feature.location.longitude = item["location"]["longitude"]
       feature.location.latitude = item["location"]["latitude"]
-      db.append(feature)
-  return db
+      feature_list.append(feature)
+  return feature_list
 
 
 def make_point(latitude, longitude):
@@ -133,7 +133,6 @@ def guide_route_chat(stub):
 
 def run():
   with route_guide_pb2.early_adopter_create_RouteGuide_stub('localhost', 50051) as stub:
-
     print "-------------- GetFeature --------------"
     guide_get_feature(stub);
     print "-------------- ListFeatures --------------"

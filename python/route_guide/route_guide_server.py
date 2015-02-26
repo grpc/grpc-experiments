@@ -40,14 +40,14 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 def read_route_guide_db():
   """Reads the route guide"""
-  db = []
+  feature_list = []
   with open("route_guide_db.json") as route_guide_db_file:
     for item in json.load(route_guide_db_file):
       feature = route_guide_pb2.Feature(name=item["name"])
       feature.location.longitude = item["location"]["longitude"]
       feature.location.latitude = item["location"]["latitude"]
-      db.append(feature)
-  return db
+      feature_list.append(feature)
+  return feature_list
 
 
 def get_feature(feature_db, point):
