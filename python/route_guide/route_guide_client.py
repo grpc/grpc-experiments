@@ -88,18 +88,18 @@ def guide_list_features(stub):
     print "Feature called %s at %s" % (feature.name, feature.location)
 
 
-def generate_route(db):
+def generate_route(feature_list):
   for index in range(0, 10):
-    random_feature = db[random.randint(0, len(db) - 1)]
+    random_feature = feature_list[random.randint(0, len(feature_list) - 1)]
     print "Visiting point %s" % random_feature.location
     yield random_feature.location
     time.sleep(random.uniform(0.5, 1.5))
 
 
 def guide_record_route(stub):
-  feature_db = read_route_guide_db()
+  feature_list = read_route_guide_db()
 
-  route_iter = generate_route(feature_db)
+  route_iter = generate_route(feature_list)
   route_summary = stub.RecordRoute(route_iter, _TIMEOUT_SECONDS)
   print "Finished trip with %s points " % route_summary.point_count
   print "Passed %s features " % route_summary.feature_count
