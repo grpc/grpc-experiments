@@ -50,10 +50,6 @@ def read_route_guide_db():
   return feature_list
 
 
-def make_point(latitude, longitude):
-  return route_guide_pb2.Point(latitude=latitude, longitude=longitude)
-
-
 def make_route_note(message, latitude, longitude):
   route_note = route_guide_pb2.RouteNote(message=message)
   route_note.location.latitude = latitude
@@ -74,8 +70,8 @@ def guide_get_one_feature(stub, point):
 
 
 def guide_get_feature(stub):
-  guide_get_one_feature(stub, make_point(409146138, -746188906))
-  guide_get_one_feature(stub, make_point(0, 0))
+  guide_get_one_feature(stub, route_guide_pb2.Point(latitude=409146138, longitude=-746188906))
+  guide_get_one_feature(stub, route_guide_pb2.Point(latitude=0, longitude=0))
 
 
 def guide_list_features(stub):
