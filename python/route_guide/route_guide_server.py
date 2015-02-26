@@ -31,7 +31,7 @@
 
 import json
 import time
-from math import sqrt, radians, sin, cos, atan2
+import math
 
 import route_guide_pb2
 
@@ -41,9 +41,9 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 def read_route_guide_db():
   """Reads the route guide"""
   db = []
-  with open("route_guide_db.json") as f:
-    for item in json.load(f):
-      feature = route_guide_pb2.Feature(name = item["name"])
+  with open("route_guide_db.json") as route_guide_db_file:
+    for item in json.load(route_guide_db_file):
+      feature = route_guide_pb2.Feature(name=item["name"])
       feature.location.longitude = item["location"]["longitude"]
       feature.location.latitude = item["location"]["latitude"]
       db.append(feature)
@@ -65,13 +65,13 @@ def get_distance(start, end):
   lat_2 = end.latitude / coord_factor
   lon_1 = start.latitude / coord_factor
   lon_2 = end.longitude / coord_factor
-  lat_rad_1 = radians(lat_1)
-  lat_rad_2 = radians(lat_2)
-  delta_lat_rad = radians(lat_2 - lat_1)
-  delta_lon_rad = radians(lon_2 - lon_1)
+  lat_rad_1 = math.radians(lat_1)
+  lat_rad_2 = math.radians(lat_2)
+  delta_lat_rad = math.radians(lat_2 - lat_1)
+  delta_lon_rad = math.radians(lon_2 - lon_1)
 
-  a = pow(sin(delta_lat_rad/2), 2) + cos(lat_rad_1) * cos(lat_rad_2) * pow(sin(delta_lon_rad/2), 2)
-  c = 2 * atan2(sqrt(a), sqrt(1-a))
+  a = pow(math.sin(delta_lat_rad/2), 2) + math.cos(lat_rad_1) * math.cos(lat_rad_2) * pow(math.sin(delta_lon_rad/2), 2)
+  c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
   R = 6371000; # metres
   return R * c;
 
@@ -84,7 +84,7 @@ class RouteGuideServicer(route_guide_pb2.EarlyAdopterRouteGuideServicer):
   def GetFeature(self, request, context):
     feature = get_feature(self.db, request)
     if not feature:
-      feature = route_guide_pb2.Feature(name = "")
+      feature = route_guide_pb2.Feature(name="")
       feature.location.longitude = request.longitude
       feature.location.latitude = request.latitude
     return feature
@@ -119,10 +119,10 @@ class RouteGuideServicer(route_guide_pb2.EarlyAdopterRouteGuideServicer):
       prev_point = point
 
     elapsed_time = time.time() - start_time
-    return route_guide_pb2.RouteSummary(point_count = point_count,
-                                        feature_count = feature_count,
-                                        distance = int(distance),
-                                        elapsed_time = int(elapsed_time))
+    return route_guide_pb2.RouteSummary(point_count=point_count,
+                                        feature_count=feature_count,
+                                        distance=int(distance),
+                                        elapsed_time=int(elapsed_time))
 
   def RouteChat(self, request_iterator, context):
     received_notes = []

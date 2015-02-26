@@ -41,9 +41,9 @@ _TIMEOUT_SECONDS = 30
 def read_route_guide_db():
   """Reads the route guide"""
   db = []
-  with open("route_guide_db.json") as f:
-    for item in json.load(f):
-      feature = route_guide_pb2.Feature(name = item["name"])
+  with open("route_guide_db.json") as route_guide_db_file:
+    for item in json.load(route_guide_db_file):
+      feature = route_guide_pb2.Feature(name=item["name"])
       feature.location.longitude = item["location"]["longitude"]
       feature.location.latitude = item["location"]["latitude"]
       db.append(feature)
@@ -51,11 +51,11 @@ def read_route_guide_db():
 
 
 def make_point(latitude, longitude):
-  return route_guide_pb2.Point(latitude = latitude, longitude = longitude)
+  return route_guide_pb2.Point(latitude=latitude, longitude=longitude)
 
 
 def make_route_note(message, latitude, longitude):
-  route_note = route_guide_pb2.RouteNote(message = message)
+  route_note = route_guide_pb2.RouteNote(message=message)
   route_note.location.latitude = latitude
   route_note.location.longitude = longitude
   return route_note
