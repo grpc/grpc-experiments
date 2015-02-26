@@ -112,13 +112,8 @@ to the [next step](#servicedef).
 
 #### Install Git
 
-You can download and install Git from http://git-scm.com/download. Once
-installed you should have access to the git command line tool. The main
-commands that you will need to use are:
-
-- git clone ... : clone a remote repository onto your local machine
-- git checkout ... : check out a particular branch or a tagged version of
-the code to hack on
+You can download and install Git from http://git-scm.com/download. This
+tutorial assumes familiarity with Git and GitHub.
 
 #### Get the source code
 
@@ -128,7 +123,7 @@ following command:
 
 
 ```
-git clone https://github.com/google/grpc-common.git
+git clone https://github.com/grpc/grpc-common.git
 ```
 
 Change your current directory to grpc-common/java
