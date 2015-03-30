@@ -43,6 +43,7 @@
 #include <grpc++/channel_interface.h>
 #include <grpc++/client_context.h>
 #include <grpc++/create_channel.h>
+#include <grpc++/credentials.h>
 #include <grpc++/status.h>
 #include <grpc++/stream.h>
 #include "helper.h"
@@ -120,7 +121,7 @@ class RouteGuideClient {
       std::cout << "Found feature called "
                 << feature.name() << " at "
                 << feature.location().latitude()/kCoordFactor_ << ", "
-                << feature.location().latitude()/kCoordFactor_ << std::endl;
+                << feature.location().longitude()/kCoordFactor_ << std::endl;
     }
     Status status = reader->Finish();
     if (status.IsOk()) {
@@ -242,7 +243,8 @@ int main(int argc, char** argv) {
   // Expect only arg: --db_path=path/to/route_guide_db.json.
   std::string db = examples::GetDbFileContent(argc, argv);
   RouteGuideClient guide(
-      grpc::CreateChannelDeprecated("localhost:50051", ChannelArguments()),
+      grpc::CreateChannel("localhost:50051", grpc::InsecureCredentials(),
+                          ChannelArguments()),
       db);
 
   std::cout << "-------------- GetFeature --------------" << std::endl;

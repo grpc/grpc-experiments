@@ -20,7 +20,7 @@ With gRPC we can define our service once in a .proto file and implement clients 
 
 The example code for our tutorial is in [grpc/grpc-common/cpp/route_guide](https://github.com/grpc/grpc-common/tree/master/cpp/route_guide). To download the example, clone the `grpc-common` repository by running the following command:
 ```shell
-$ git clone https://github.com/google/grpc-common.git
+$ git clone https://github.com/grpc/grpc-common.git
 ```
 
 Then change your current directory to `grpc-common/cpp/route_guide`:
@@ -60,7 +60,7 @@ Then you define `rpc` methods inside your service definition, specifying their r
   rpc ListFeatures(Rectangle) returns (stream Feature) {}
 ```
 
-- A *client-side streaming RPC* where the client writes a sequence of messages and sends them to the server, again using a provided stream. Once the client has finished writing the messages, it waits for the server to read them all and return its response. You specify a server-side streaming method by placing the `stream` keyword before the *request* type.
+- A *client-side streaming RPC* where the client writes a sequence of messages and sends them to the server, again using a provided stream. Once the client has finished writing the messages, it waits for the server to read them all and return its response. You specify a client-side streaming method by placing the `stream` keyword before the *request* type.
 ```
   // Accepts a stream of Points on a route being traversed, returning a
   // RouteSummary when traversal is completed.
@@ -214,7 +214,7 @@ void RunServer(const std::string& db_path) {
   RouteGuideImpl service(db_path);
 
   ServerBuilder builder;
-  builder.AddPort(server_address);
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
   std::unique_ptr<Server> server(builder.BuildAndStart());
   std::cout << "Server listening on " << server_address << std::endl;
@@ -225,7 +225,7 @@ As you can see, we build and start our server using a `ServerBuilder`. To do thi
 
 1. Create an instance of our service implementation class `RouteGuideImpl`.
 2. Create an instance of the factory `ServerBuilder` class.
-3. Specify the address and port we want to use to listen for client requests using the builder's `AddPort()` method.
+3. Specify the address and port we want to use to listen for client requests using the builder's `AddListeningPort()` method.
 4. Register our service implementation with the builder.
 5. Call `BuildAndStart()` on the builder to create and start an RPC server for our service.
 5. Call `Wait()` on the server to do a blocking wait until process is killed or `Shutdown()` is called.
@@ -239,10 +239,10 @@ In this section, we'll look at creating a C++ client for our `RouteGuide` servic
 
 To call service methods, we first need to create a *stub*.
 
-First we need to create a gRPC *channel* for our stub, specifying the server address and port we want to connect to and any special channel arguments - in our case we'll use the default `ChannelArguments`:
+First we need to create a gRPC *channel* for our stub, specifying the server address and port we want to connect to and any special channel arguments - in our case we'll use the default `ChannelArguments` and no SSL:
 
 ```cpp
-grpc::CreateChannelDeprecated("localhost:50051", ChannelArguments());
+grpc::CreateChannel("localhost:50051", grpc::InsecureCredentials(), ChannelArguments());
 ```
 
 Now we can use the channel to create our stub using the `NewStub` method provided in the `RouteGuide` class we generated from our .proto.
@@ -298,7 +298,7 @@ Now let's look at our streaming methods. If you've already read [Creating the se
       std::cout << "Found feature called "
                 << feature.name() << " at "
                 << feature.location().latitude()/kCoordFactor_ << ", "
-                << feature.location().latitude()/kCoordFactor_ << std::endl;
+                << feature.location().longitude()/kCoordFactor_ << std::endl;
     }
     Status status = reader->Finish();
 ```

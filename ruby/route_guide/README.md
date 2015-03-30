@@ -20,7 +20,7 @@ With gRPC we can define our service once in a .proto file and implement clients 
 
 The example code for our tutorial is in [grpc/grpc-common/ruby/route_guide](https://github.com/grpc/grpc-common/tree/master/ruby/route_guide). To download the example, clone the `grpc-common` repository by running the following command:
 ```shell
-$ git clone https://github.com/google/grpc-common.git
+$ git clone https://github.com/grpc/grpc-common.git
 ```
 
 Then change your current directory to `grpc-common/ruby/route_guide`:
@@ -199,7 +199,7 @@ As you can see, we build and start our server using a `GRPC::RpcServer`. To do t
 <a name="client"></a>
 ## Creating the client
 
-In this section, we'll look at creating a Rubyclient for our `RouteGuide` service. You can see our complete example client code in [grpc-common/ruby/route_guide/route_guide_client.rb](https://github.com/grpc/grpc-common/blob/master/ruby/route_guide/route_guide_client.rb).
+In this section, we'll look at creating a Ruby client for our `RouteGuide` service. You can see our complete example client code in [grpc-common/ruby/route_guide/route_guide_client.rb](https://github.com/grpc/grpc-common/blob/master/ruby/route_guide/route_guide_client.rb).
 
 ### Creating a stub
 
