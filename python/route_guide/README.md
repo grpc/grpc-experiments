@@ -8,6 +8,9 @@ This tutorial provides a basic Python programmer's introduction to working with 
 
 It assumes that you have read the [Getting started](https://github.com/grpc/grpc-common) guide and are familiar with [protocol buffers] (https://developers.google.com/protocol-buffers/docs/overview).
 
+This isn't a comprehensive guide to using gRPC in Python: more reference documentation is coming soon.
+
+
 ## Why use gRPC?
 
 This example is a simple route mapping application that lets clients get information about features on their route, create a summary of their route, and exchange route information such as traffic updates with the server and other clients.
