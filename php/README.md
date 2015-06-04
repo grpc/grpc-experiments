@@ -21,15 +21,6 @@ INSTALL
    $ git clone https://github.com/grpc/grpc-common.git
    ```
 
- - Install Protobuf-PHP
-
-   ```
-   $ git clone https://github.com/murgatroid99/Protobuf-PHP.git
-   $ cd Protobuf-PHP
-   $ rake pear:package version=1.0
-   $ pear install Protobuf-1.0.tgz
-   ```
-
  - Install composer
 
    ```
@@ -60,7 +51,7 @@ TRY IT!
 
  - Run the server
 
-   Please follow the instruction in [Node](https://github.com/grpc/grpc-common/tree/master/node) to run the server
+   Please follow the instruction in [Node][] to run the server
    ```
    $ cd grpc-common/node
    $ nodejs greeter_server.js
@@ -88,3 +79,4 @@ Coming soon
 [homebrew]:http://brew.sh
 [linuxbrew]:https://github.com/Homebrew/linuxbrew#installation
 [gRPC install script]:https://raw.githubusercontent.com/grpc/homebrew-grpc/master/scripts/install
+[Node]:https://github.com/grpc/grpc-common/tree/master/node
