@@ -42,6 +42,11 @@
 
 namespace examples {
 
+static const std::string kLocation = "\"location\":";
+static const std::string kLatitude = "\"latitude\":";
+static const std::string kLongitude = "\"longitude\":";
+static const std::string kName = "\"name\":";
+
 std::string GetDbFileContent(int argc, char** argv) {
   std::string db_path;
   std::string arg_str("--db_path");
@@ -73,7 +78,7 @@ std::string GetDbFileContent(int argc, char** argv) {
 // "the name can be empty" }, { ... } ... The spaces will be stripped.
 class Parser {
  public:
-  explicit Parser(const std::string& db) : db_(db) {
+  explicit Parser(const std::string& db) : db_(db), failed_(false), current_(0) {
     // Remove all spaces.
     db_.erase(
         std::remove_if(db_.begin(), db_.end(), isspace),
@@ -91,18 +96,18 @@ class Parser {
     if (failed_ || Finished() || !Match("{")) {
       return SetFailedAndReturnFalse();
     }
-    if (!Match(location_) || !Match("{") || !Match(latitude_)) {
+    if (!Match(kLocation) || !Match("{") || !Match(kLatitude)) {
       return SetFailedAndReturnFalse();
     }
     long temp = 0;
     ReadLong(&temp);
     feature->mutable_location()->set_latitude(temp);
-    if (!Match(",") || !Match(longitude_)) {
+    if (!Match(",") || !Match(kLongitude)) {
       return SetFailedAndReturnFalse();
     }
     ReadLong(&temp);
     feature->mutable_location()->set_longitude(temp);
-    if (!Match("},") || !Match(name_) || !Match("\"")) {
+    if (!Match("},") || !Match(kName) || !Match("\"")) {
       return SetFailedAndReturnFalse();
     }
     size_t name_start = current_;
@@ -143,13 +148,9 @@ class Parser {
     *l = std::stol(db_.substr(start, current_ - start));
   }
 
-  bool failed_ = false;
+  bool failed_;
   std::string db_;
-  size_t current_ = 0;
-  const std::string location_ = "\"location\":";
-  const std::string latitude_ = "\"latitude\":";
-  const std::string longitude_ = "\"longitude\":";
-  const std::string name_ = "\"name\":";
+  size_t current_;
 };
 
 void ParseDb(const std::string& db, std::vector<Feature>* feature_list) {
