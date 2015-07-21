@@ -63,6 +63,8 @@ using examples::RouteSummary;
 using examples::RouteNote;
 using examples::RouteGuide;
 
+static const float kCoordFactor = 10000000.0;
+
 Point MakePoint(long latitude, long longitude) {
   Point p;
   p.set_latitude(latitude);
@@ -120,8 +122,8 @@ class RouteGuideClient {
     while (reader->Read(&feature)) {
       std::cout << "Found feature called "
                 << feature.name() << " at "
-                << feature.location().latitude()/kCoordFactor_ << ", "
-                << feature.location().longitude()/kCoordFactor_ << std::endl;
+                << feature.location().latitude()/kCoordFactor << ", "
+                << feature.location().longitude()/kCoordFactor << std::endl;
     }
     Status status = reader->Finish();
     if (status.ok()) {
@@ -149,8 +151,8 @@ class RouteGuideClient {
     for (int i = 0; i < kPoints; i++) {
       const Feature& f = feature_list_[feature_distribution(generator)];
       std::cout << "Visiting point "
-                << f.location().latitude()/kCoordFactor_ << ", "
-                << f.location().longitude()/kCoordFactor_ << std::endl;
+                << f.location().latitude()/kCoordFactor << ", "
+                << f.location().longitude()/kCoordFactor << std::endl;
       if (!writer->Write(f.location())) {
         // Broken stream.
         break;
@@ -178,11 +180,12 @@ class RouteGuideClient {
         stub_->RouteChat(&context));
 
     std::thread writer([stream]() {
-      std::vector<RouteNote> notes{
-        MakeRouteNote("First message", 0, 0),
-        MakeRouteNote("Second message", 0, 1),
-        MakeRouteNote("Third message", 1, 0),
-        MakeRouteNote("Fourth message", 0, 0)};
+      std::vector<RouteNote> notes;
+      notes.push_back(MakeRouteNote("First message", 0, 0));
+      notes.push_back(MakeRouteNote("Second message", 0, 1));
+      notes.push_back(MakeRouteNote("Third message", 1, 0));
+      notes.push_back(MakeRouteNote("Fourth message", 0, 0));
+
       for (const RouteNote& note : notes) {
         std::cout << "Sending message " << note.message()
                   << " at " << note.location().latitude() << ", "
@@ -220,17 +223,16 @@ class RouteGuideClient {
     }
     if (feature->name().empty()) {
       std::cout << "Found no feature at "
-                << feature->location().latitude()/kCoordFactor_ << ", "
-                << feature->location().longitude()/kCoordFactor_ << std::endl;
+                << feature->location().latitude()/kCoordFactor << ", "
+                << feature->location().longitude()/kCoordFactor << std::endl;
     } else {
       std::cout << "Found feature called " << feature->name()  << " at "
-                << feature->location().latitude()/kCoordFactor_ << ", "
-                << feature->location().longitude()/kCoordFactor_ << std::endl;
+                << feature->location().latitude()/kCoordFactor << ", "
+                << feature->location().longitude()/kCoordFactor << std::endl;
     }
     return true;
   }
 
-  const float kCoordFactor_ = 10000000.0;
   std::unique_ptr<RouteGuide::Stub> stub_;
   std::vector<Feature> feature_list_;
 };
