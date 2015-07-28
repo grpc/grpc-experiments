@@ -39,3 +39,7 @@ $ git clone https://github.com/grpc/grpc-common
 $ cd grpc-common/java/android
 $ ./gradlew installDebug
 ```
+
+Useful resources
+----------------
+- Another [example project](https://github.com/Lovoo/grpc-android-demo) for GRPC on Android featuring code generation from a proto file via gradle and a simple Java server implementation
