@@ -20,6 +20,10 @@ Tokens to RPCs being made at a client. Additional support for acquiring Access
 Tokens while accessing Google APIs through gRPC is provided for certain auth
 flows, demonstrated through code examples below.
 
+*WARNING*: Oauth2 support is only to connect to Google services. Sending a
+Google issued Oauth2 token to a non-Google service could result in this token
+being stolen and used to impersonate the client to Google services.
+
 ## API
 To reduce complexity and minimize API clutter, gRPC works with a unified concept
 of a Credentials object. Users construct gRPC credentials using corresponding
@@ -57,7 +61,7 @@ gRPC applications can use a simple API to create a credential that works in vari
 ```cpp
 std::unique_ptr<Credentials> creds = CredentialsFactory::GoogleDefaultCredentials();
 // Create a channel, stub and make RPC calls (same as in the previous example)
-std::shared_ptr<ChannelInterface> channel = CreateChannel(server_name, creds, channel_args);
+std::shared_ptr<ChannelInterface> channel = CreateChannel("greeter.googleapis.com", creds, channel_args);
 std::unique_ptr<Greeter::Stub> stub(Greeter::NewStub(channel));
 grpc::Status s = stub->sayHello(&context, *request, response);
 ```
@@ -73,24 +77,17 @@ For applications running in GCE, a default service account and corresponding
 OAuth scopes can be configured during VM setup. At run-time, this credential
 handles communication with the authentication systems to obtain OAuth2 access
 tokens and attaches them to each outgoing RPC on the corresponding channel.
-Extending gRPC to support other authentication mechanisms
-The gRPC protocol is designed with a general mechanism for sending metadata
-associated with RPC. Clients can send metadata at the beginning of an RPC and
-servers can send back metadata at the beginning and end of the RPC. This
-provides a natural mechanism to support OAuth2 and other authentication
-mechanisms that need attach bearer tokens to individual request.
 
-In the simplest case, there is a single line of code required on the client
-to add a specific token as metadata to an RPC and a corresponding access on
-the server to retrieve this piece of metadata. The generation of the token
-on the client side and its verification at the server can be done separately.
+###Extending gRPC to support other authentication mechanisms
 
-A deeper integration can be achieved by plugging in a gRPC credentials implementation for any custom authentication mechanism that needs to attach per-request tokens. gRPC internals also allow switching out SSL/TLS with other encryption mechanisms.
+Coming soon. We are working on a framework to allow users to create their own
+Credentials and to verify them server-side.
+
 
 ## Examples
 
 These authentication mechanisms will be available in all gRPC's supported languages.
-The following sections demonstrate how authentication and authorization features described above appear in each language: more languages are coming soon.
+The following sections demonstrate how authentication features described above appear in each language: more languages are coming soon.
 
 ###SSL/TLS for server authentication and encryption (Ruby)
 ```ruby
@@ -147,37 +144,37 @@ n.b.: the beta API will look different
 
 ###Authenticating with Google (Ruby)
 ```ruby
-# Base case - No encryption/authorization
+# Base case - No encryption/authentication
 stub = Helloworld::Greeter::Stub.new('localhost:50051')
 ...
 
 # Authenticating with Google
 require 'googleauth'  # from http://www.rubydoc.info/gems/googleauth/0.1.0
 ...
-creds = GRPC::Core::Credentials.new(load_certs)  # load_certs typically loads a CA roots file
+creds = GRPC::Core::Credentials.new()  # Loads publicly trusted SSL roots.
 scope = 'https://www.googleapis.com/auth/grpc-testing'
-authorization = Google::Auth.get_application_default(scope)
-stub = Helloworld::Greeter::Stub.new('localhost:50051',
+google_creds = Google::Auth.get_application_default(scope)
+stub = Helloworld::Greeter::Stub.new('greeter.googleapis.com',
                                      creds: creds,
-                                     update_metadata: authorization.updater_proc)
+                                     update_metadata: google_creds.updater_proc)
 ```
 
 ###Authenticating with Google (Node.js)
 
 ```node
-// Base case - No encryption/authorization
+// Base case - No encryption/authentication
 var stub = new helloworld.Greeter('localhost:50051');
 ...
 // Authenticating with Google
 var GoogleAuth = require('google-auth-library'); // from https://www.npmjs.com/package/google-auth-library
 ...
-var creds = grpc.Credentials.createSsl(load_certs); // load_certs typically loads a CA roots file
+var creds = grpc.Credentials.createSsl(); // Loads publicly trusted roots.
 var scope = 'https://www.googleapis.com/auth/grpc-testing';
 (new GoogleAuth()).getApplicationDefault(function(err, auth) {
   if (auth.createScopeRequired()) {
     auth = auth.createScoped(scope);
   }
-  var stub = new helloworld.Greeter('localhost:50051',
+  var stub = new helloworld.Greeter('greeter.googleapis.com',
                                     {credentials: creds},
                                     grpc.getGoogleAuthDelegate(auth));
 });
@@ -185,7 +182,7 @@ var scope = 'https://www.googleapis.com/auth/grpc-testing';
 
 ###Authenticating with Google (C#)
 ```csharp
-// Base case - No encryption/authorization
+// Base case - No encryption/authentication
 var channel = new Channel("localhost:50051");
 var client = new Greeter.GreeterClient(channel);
 ...
@@ -193,37 +190,36 @@ var client = new Greeter.GreeterClient(channel);
 // Authenticating with Google
 using Grpc.Auth;  // from Grpc.Auth NuGet package
 ...
-var credentials = new SslCredentials(File.ReadAllText("ca.pem"));  // Load a CA file
-var channel = new Channel("localhost:50051", credentials);
+var sslCreds = new SslCredentials();  // Loads publicly trusted roots.
+var channel = new Channel("greeter.googleapis.com", sslCreds);
 
 string scope = "https://www.googleapis.com/auth/grpc-testing";
-var authorization = GoogleCredential.GetApplicationDefault();
-if (authorization.IsCreateScopedRequired)
+var googleCred = GoogleCredential.GetApplicationDefault();
+if (googleCred.IsCreateScopedRequired)
 {
-    authorization = credential.CreateScoped(new[] { scope });
+    googleCred = credential.CreateScoped(new[] { scope });
 }
 var client = new Greeter.GreeterClient(channel,
-        new StubConfiguration(OAuth2InterceptorFactory.Create(credential)));
+        new StubConfiguration(OAuth2InterceptorFactory.Create(googleCred)));
 ```
 
 ###Authenticating with Google (PHP)
 ```php
-// Base case - No encryption/authorization
+// Base case - No encryption/authentication
 $client = new helloworld\GreeterClient(
   new Grpc\BaseStub('localhost:50051', []));
 ...
 
 // Authenticating with Google
-// the environment variable "GOOGLE_APPLICATION_CREDENTIALS" needs to be set
 $scope = "https://www.googleapis.com/auth/grpc-testing";
 $auth = Google\Auth\ApplicationDefaultCredentials::getCredentials($scope);
 $opts = [
-  'credentials' => Grpc\Credentials::createSsl(file_get_contents('ca.pem'));
+  'credentials' => Grpc\Credentials::createSsl();
   'update_metadata' => $auth->getUpdateMetadataFunc(),
 ];
 
 $client = new helloworld\GreeterClient(
-  new Grpc\BaseStub('localhost:50051', $opts));
+  new Grpc\BaseStub('greeter.googleapis.com', $opts));
 
 ```
 
@@ -282,7 +278,7 @@ metadata_transformer = (
     lambda x: [('Authorization', 'Bearer {}'.format(access_token))])
 
 stub = early_adopter_create_GreeterService_stub(
-  'localhost', 50051, secure=True, root_certificates=open('ca.pem').read(),
+  'greeter.googleapis.com', 443, secure=True,
   metadata_transformer=metadata_transformer)
 ...
 ```
