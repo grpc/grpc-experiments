@@ -5,4 +5,4 @@
 # ADJUST THIS PATH TO WHERE YOUR ACTUAL LOCATION IS
 GRPC_ROOT=~/github/grpc
 
-$GRPC_ROOT/python2.7_virtual_environment/bin/python greeter_client.py
+$GRPC_ROOT/python_virtual_environment/bin/python greeter_client.py
