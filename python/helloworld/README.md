@@ -7,14 +7,14 @@ Make sure you have built gRPC Python from source on your system. Follow the inst
 [https://github.com/grpc/grpc/blob/master/src/python/README.md](https://github.com/grpc/grpc/blob/master/src/python/README.md).
 
 This gives you a python virtual environment with installed gRPC Python
-in GRPC_ROOT/python2.7_virtual_environment. GRPC_ROOT is the path to which you
-have cloned the [gRPC git repo](https://github.com/grpc/grpc).
+in `$GRPC_ROOT/python2.7_virtual_environment`. `$GRPC_ROOT` is the path to which
+you have cloned the [gRPC git repo](https://github.com/grpc/grpc).
 
 ### Get the source code
 
-The example code for our Hello World and our other examples live in the `grpc-common`
-GitHub repository. Clone this repository to your local machine by running the
-following command:
+The example code for our Hello World and our other examples live in the
+`grpc-common` GitHub repository. Clone this repository to your local machine by
+running the following command:
 
 
 ```sh
@@ -91,8 +91,7 @@ Which internally invokes the proto-compiler as:
 $ protoc -I ../../protos --python_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_python_plugin` ../../protos/helloworld.proto
 ```
 
-Optionally, you can just skip the code generation step as the generated python module has already
-been generated for you (helloworld_pb2.py).
+The generated file is named `helloworld_pb2.py`.
 
 ### The client
 
@@ -107,7 +106,7 @@ $ ./run_client.sh
 
 ### The server
 
-Server side code can be found in [greeter_server.py](https://github.com/grpc/grpc-common/blob/master/python/helloworld/greeter_server.py). 
+Server side code can be found in [greeter_server.py](https://github.com/grpc/grpc-common/blob/master/python/helloworld/greeter_server.py).
 
 You can run the server using:
 

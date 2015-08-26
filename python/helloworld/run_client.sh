@@ -1,8 +1,19 @@
 #!/bin/bash
 
-# This is where you have cloned out the https://github.com/grpc/grpc repository
-# And built gRPC Python.
-# ADJUST THIS PATH TO WHERE YOUR ACTUAL LOCATION IS
-GRPC_ROOT=~/github/grpc
+# If you haven't set the GRPC_ROOT environment variable, we'll set it for you.
+if [ -z ${GRPC_ROOT+x} ]; then
+  GRPC_ROOT=~/github/grpc
+fi
 
+# If you haven't set the GRPC_CONFIG environment variable, we'll set it for you.
+if [ -z ${GRPC_CONFIG+x} ]; then
+  GRPC_CONFIG=opt
+fi
+
+# In case you didn't install GRPC, we'll let you leave it in $GRPC_ROOT.
+export LD_LIBRARY_PATH=$GRPC_ROOT/libs/$GRPC_CONFIG
+
+cd $(dirname $0)
+
+# Run the greeter client!
 $GRPC_ROOT/python2.7_virtual_environment/bin/python greeter_client.py
