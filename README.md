@@ -1,14 +1,5 @@
+# Experiments and proposals for gRPC features.
 
-# The gRPC documentation and examples have been moved!
+The purpose of this repository is to have a single place for people to push code and various documentation that gravitate around experimenting with new features for gRPC. This repository isn't tested, and will be lightly curated, so the code here should not be considered production-worthy (and it may not be functional at all).
 
-You can find quick start guides for each language, including installation instructions, examples, and tutorials here:
-* [C++](https://github.com/grpc/grpc/tree/master/examples/cpp)
-* [Java](https://github.com/grpc/grpc-java/tree/master/examples)
-* [Go](https://github.com/grpc/grpc-go/tree/master/examples)
-* [Ruby](https://github.com/grpc/grpc/tree/master/examples/ruby)
-* [Node.js](https://github.com/grpc/grpc/tree/master/examples/node)
-* [Android Java](https://github.com/grpc/grpc-java/tree/master/examples/android)
-* [Python](https://github.com/grpc/grpc/tree/master/examples/python/helloworld)
-* [C#](https://github.com/grpc/grpc/tree/master/examples/csharp)
-* [Objective-C](https://github.com/grpc/grpc/tree/master/examples/objective-c/route_guide)
-* [PHP](https://github.com/grpc/grpc/tree/master/examples/php/)
+Some of the experiments conducted here might be cherry-picked for being introduced as an actual pull request on our main repositories.
