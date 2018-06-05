@@ -1,0 +1,24 @@
+<h3>Showing server sockets starting from:</h3>
+Server id:
+<input #serverIdTextBox type="text" [(ngModel)]="serverId" (keyup.enter)="processEntry()" required>
+Starting socket:
+<input #socketStartIdTextBox type="text" [(ngModel)]="socketStartId" (keyup.enter)="processEntry()" required>
+<button (click)="processEntry()">Refresh</button>
+<div>
+  <table>
+    <tr>
+      <th>Sockets</th>
+    </tr>
+    <tr *ngFor="let s of sockets">
+      <td>
+        <a routerLink="/channelz/socket/{{s['socketId']}}">{{s['socketId']}}[{{s['name']}}]</a>
+      </td>
+    </tr>
+  </table>
+</div>
+<div *ngIf="nextSocketId">
+  <a routerLink="/channelz/serversockets/{{serverId}}/{{nextSocketId}}">Click here for next page</a>
+</div>
+<div *ngIf="!nextSocketId">
+  <p>End of results</p>
+</div>

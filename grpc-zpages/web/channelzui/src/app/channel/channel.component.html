@@ -1,0 +1,48 @@
+<h3>Showing channel:</h3>
+<input #textbox type="text" [(ngModel)]="enteredData" (keyup.enter)="processEntry()" required>
+<button (click)="processEntry()">Refresh</button>
+<div>
+  <div *ngIf="channel">
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>ChannelRef</td>
+      <td><pre>{{channel['ref']['channelId']}}[{{channel['ref']['name']}}]</pre></td>
+    </tr>
+    <tr>
+      <td>Data</td>
+      <td><pre>{{channel['data'] | jsonpretty}}</pre></td>
+    </tr>
+    <tr>
+      <td>Channels</td>
+      <td>
+        <div *ngFor="let ref of channel['channelRef']">
+          <a routerLink="/channelz/channel/{{ref['channelId']}}">{{ref['channelId']}}[{{ref['name']}}]</a>,
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Subchannels</td>
+      <td>
+        <div *ngFor="let ref of channel['subchannelRef']">
+          <a routerLink="/channelz/subchannel/{{ref['subchannelId']}}">{{ref['subchannelId']}}[{{ref['name']}}]</a>,
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Sockets</td>
+      <td>
+        <div *ngFor="let ref of channel['socketRef']">
+          <a routerLink="/channelz/socket/{{ref['socketId']}}">{{ref['socketId']}}[{{ref.name}}]</a>,
+        </div>
+      </td>
+    </tr>
+  </table>
+  </div>
+  <div *ngIf="!channel && id">
+    <p>Channel does not exist</p>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<h3>Showing top level channels starting from:</h3>
+<input #textbox type="text" [(ngModel)]="startId" (keyup.enter)="processEntry()" required>
+<button (click)="processEntry()">Refresh</button>
+<div>
+  <table>
+    <tr>
+      <th>Channel</th>
+      <th>Data</th>
+      <th>Channels</th>
+      <th>Subchannels</th>
+      <th>Sockets</th>
+    </tr>
+    <tr *ngFor="let c of topChannelsList">
+      <td>{{c['ref']['channelId']}}[{{c['ref']['name']}}]</td>
+      <td><pre>{{c.data | jsonpretty}}</pre></td>
+      <td>
+        <div *ngFor="let ref of c['channelRef']">
+          <a routerLink="/channelz/channel/{{ref['channelId']}}">{{ref['channelId']}}[{{ref['name']}}]</a>,
+        </div>
+      </td>
+      <td>
+        <div *ngFor="let ref of c['subchannelRef']">
+          <a routerLink="/channelz/subchannel/{{ref['subchannelId']}}">{{ref['subchannelId']}}[{{ref['name']}}]</a>,
+        </div>
+      </td>
+      <td>
+        <div *ngFor="let ref of c['socketRef']">
+          <a routerLink="/channelz/socket/{{ref['socketId']}}">{{ref['socketId']}}[{{ref['name']}}]</a>,
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div *ngIf="nextId">
+  <a routerLink="/channelz/topchannels/{{nextId}}">Click here for next page</a>
+</div>
+<div *ngIf="!nextId">
+  <p>End of results</p>
+</div>
