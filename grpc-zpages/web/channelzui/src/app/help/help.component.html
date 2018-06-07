@@ -1,0 +1,10 @@
+<div>
+  <h2>Java notes:</h2>
+  <ul>
+    <li>InProcessTransport is not a real socket, so in process servers and channels will
+      not provide socket level stats. If you try to load an InProcesTransport, channelz will
+      report that the socket is not found. This is normal. Use the provided channel, subchannel, or
+      server level stats instead.</li>
+    <li>Not all stats specified by channelz.proto are exported yet, but they will be soon.</li>
+  </ul>
+</div>

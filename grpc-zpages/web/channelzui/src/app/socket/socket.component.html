@@ -1,0 +1,41 @@
+<h3>Showing socket:</h3>
+<input #textbox type="text" [(ngModel)]="enteredData" (keyup.enter)="processEntry()" required>
+<button (click)="processEntry()">Refresh</button>
+<div>
+  <div *ngIf="socket">
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>SocketRef</td>
+      <td><pre>{{socket['ref']['socketId']}}[{{socket['ref']['name']}}]</pre></td>
+    </tr>
+    <tr>
+      <td>Local Address</td>
+      <td><pre>{{socket['local'] | addrpretty}}</pre></td>
+    </tr>
+    <tr>
+      <td>Remote Address</td>
+      <td><pre>{{socket['remote'] | addrpretty}}</pre></td>
+    </tr>
+    <tr>
+      <td>Security</td>
+      <td><pre>{{socket['security'] | jsonpretty}}</pre></td>
+    </tr>
+    <tr>
+      <td>Data</td>
+      <td><pre>{{simplifiedData | jsonpretty}}</pre></td>
+    </tr>
+    <tr *ngFor="let opt of socketOptions()">
+      <td>Socket Option: {{opt['name']}}</td>
+      <!-- opt is an typescript object, and for some reason, bracket notation does not work here -->
+      <td><pre>{{opt.value | jsonpretty}}</pre></td>
+    </tr>
+  </table>
+  </div>
+  <div *ngIf="!socket">
+    <p>Socket does not exist</p>
+  </div>
+</div>
