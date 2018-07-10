@@ -55,10 +55,12 @@ export class ServerSocketsComponent implements OnInit {
   }
 
   private handleResponse(resp: any): void {
-    this.sockets = resp['socketRef'];
-    if (!resp['end']) {
+    this.sockets = resp.getSocketRefList();
+    if (!resp.getEnd()) {
       const last = this.sockets[this.sockets.length - 1];
-      this.nextSocketId = last['socketId'];
+      this.nextSocketId = last.getSocketId();
+    } else {
+      this.nextSocketId = null;
     }
   }
 }

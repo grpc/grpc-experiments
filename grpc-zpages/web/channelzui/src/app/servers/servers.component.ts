@@ -50,10 +50,12 @@ export class ServersComponent implements OnInit {
   }
 
   private handleResponse(resp: any): void {
-    this.serversList = resp['server'];
-    if (!resp['end']) {
+    this.serversList = resp.getServerList();
+    if (!resp.getEnd()) {
       const last = this.serversList[this.serversList.length - 1];
-      this.nextId = last['ref']['serverId'];
+      this.nextId = last.getRef().getServerId();
+    } else {
+      this.nextId = null;
     }
   }
 }

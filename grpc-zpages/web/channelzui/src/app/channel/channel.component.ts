@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelzService } from '../channelz.service';
+import { channelDataHelper } from '../utils';
 
 @Component({
   selector: 'app-channel',
@@ -28,6 +29,7 @@ export class ChannelComponent implements OnInit {
   enteredData: string = "0";
   channel: any;
   id: number = 0;
+  channelDataStr: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +54,7 @@ export class ChannelComponent implements OnInit {
   }
 
   private handleResponse(resp: any): void {
-    this.channel = resp['channel'];
+    this.channel = resp.getChannel();
+    this.channelDataStr = channelDataHelper(this.channel.getData());
   }
-
 }

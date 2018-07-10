@@ -17,51 +17,69 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
+declare var protoAnyToString: any;
+declare var protoEnumToString: any;
+declare var proto: any;
 
-@Pipe({name: 'jsonpretty'})
-export class JsonPretty implements PipeTransform {
-  transform(value: any): string {
-    return JsonPretty.transform(value);
+export function protoAnyToStringHelper(packedAny: any): string {
+  return protoAnyToString(packedAny);
+}
+
+export function channelDataHelper(channelData: any): string {
+  return `state: ${protoEnumToString(proto.grpc.channelz.v1.ChannelConnectivityState.State, channelData.getState().getState())}
+target: ${channelData.getTarget()}
+calls started: ${channelData.getCallsStarted()}
+calls succeeded: ${channelData.getCallsSucceeded()}
+calls failed: ${channelData.getCallsFailed()}
+last call started: ${DateFromProto.transform(channelData.getLastCallStartedTimestamp())}`;
+}
+
+@Pipe({name: 'dateFromProto'})
+export class DateFromProto implements PipeTransform {
+  transform(protodate: any): string {
+    return DateFromProto.transform(protodate);
   }
 
-  static transform(value: any): string {
-    if (value == null) {
-      return "NULL";
+  static transform(protodate: any): string {
+    if (protodate == null) {
+      return "undefined"
     }
-    return JSON.stringify(value, null, 2);
+    // the 0 is required to set the initial date to unix epoch
+    const date = new Date(0);
+    date.setUTCSeconds(protodate.getSeconds());
+    date.setUTCMilliseconds(protodate.getNanos() / 1000000.0);
+    return date.toISOString();
   }
 }
 
-
-@Pipe({name: 'addrpretty'})
-export class AddrPretty implements PipeTransform {
+@Pipe({name: 'addrToString'})
+export class AddrToString implements PipeTransform {
   transform(value: any): string {
-    return AddrPretty.transform(value);
+    return AddrToString.transform(value);
   }
 
-  static transform(addr: {}): string {
-    if (addr['tcpipAddress'] == null) {
-      return JsonPretty.transform(addr);
-    }
-    const copy = JSON.parse(JSON.stringify(addr));
-    const tcpIp = copy['tcpipAddress'];
-    const ipAddress = tcpIp['ipAddress'];
-    const binary = atob(ipAddress);
-    const addressLen = binary.length;
-    if (binary.length === 4) {
-      // ipv4: turn bytes into decimal form
-      tcpIp['ipAddress'] = binary
-          .split("")
-          .map((c: string) => c.charCodeAt(0))
-          .join(".");
-    } else if (binary.length === 16) {
-      // ipv6: turn bytes into hex, pad with a 0 so always 2 digits long
-      const hex = binary.split("")
-          .map((c: string) => ("0" + c.charCodeAt(0).toString(16)).substr(-2))
+  static transform(addr: any): string {
+    if (addr == null) {
+      return "undefined"
+    } else if (addr.getUdsAddress() != null) {
+      return addr.getUdsAddress();
+    } else if (addr.getOtherAddress() != null) {
+      return protoAnyToStringHelper(addr.getOtherAddress().getValue());
+    } else {
+      const tcpAddrPort = addr.getTcpipAddress();
+      const tcpAddr = tcpAddrPort.getIpAddress();
+      if (tcpAddr.length === 4) {
+        // ipv4: turn bytes into decimal form
+        return tcpAddr
+          .join(".") + ":" + tcpAddrPort.getPort();
+      } else if (tcpAddr.length === 16) {
+        // ipv6: turn bytes into hex, pad with a 0 so always 2 digits long
+        const hex = tcpAddr
+          .map((c: number) => ("0" + c.toString(16)).substr(-2))
           .join("");
-      // use regex to split into 4 character chunks
-      tcpIp['ipAddress'] = hex.match(/..../g).join(":");
+        // use regex to split into 4 character chunks
+        return "[" + hex.match(/..../g).join(":")  + "]:" + tcpAddrPort.getPort();
+      }
     }
-    return JsonPretty.transform(copy);
   }
 }
