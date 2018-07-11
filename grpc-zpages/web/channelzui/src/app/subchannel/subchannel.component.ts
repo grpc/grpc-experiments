@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelzService } from '../channelz.service';
+import { channelDataHelper } from '../utils';
 
 @Component({
   selector: 'app-subchannel',
@@ -28,6 +29,7 @@ export class SubchannelComponent implements OnInit {
   enteredData: string;
   subchannel: any;
   id: number;
+  subchannelDataStr: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,6 +54,7 @@ export class SubchannelComponent implements OnInit {
   }
 
   private handleResponse(resp: any): void {
-    this.subchannel = resp['subchannel'];
+    this.subchannel = resp.getSubchannel();
+    this.subchannelDataStr = channelDataHelper(this.subchannel.getData());
   }
 }

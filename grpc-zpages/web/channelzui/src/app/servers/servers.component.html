@@ -13,14 +13,14 @@ Server id:
       <th>Listen Sockets</th>
     </tr>
     <tr *ngFor="let server of serversList">
-      <td><a routerLink="/channelz/serversockets/{{server['ref']['serverId']}}">{{server['ref']['serverId']}}[{{server['ref']['name']}}]</a></td>
-      <td>{{server['data']['callsStarted']}}</td>
-      <td>{{server['data']['callsSucceeded']}}</td>
-      <td>{{server['data']['callsFailed']}}</td>
-      <td>{{server['data']['lastCallStartedTimestamp'] | json}}</td>
+      <td><a routerLink="/channelz/serversockets/{{server.getRef().getServerId()}}">{{server.getRef().getServerId()}}[{{server.getRef().getName()}}]</a></td>
+      <td>{{server.getData().getCallsStarted()}}</td>
+      <td>{{server.getData().getCallsSucceeded()}}</td>
+      <td>{{server.getData().getCallsFailed()}}</td>
+      <td>{{server.getData().getLastCallStartedTimestamp() | dateFromProto}}</td>
       <td>
-        <div *ngFor="let lsock of server['listenSocket']">
-          <a routerLink="/channelz/socket/{{lsock['socketId']}}">{{lsock['socketId']}}[{{lsock['name']}}]</a>
+        <div *ngFor="let lsock of server.getListenSocketList()">
+          <a routerLink="/channelz/socket/{{lsock.getSocketId()}}">{{lsock.getSocketId()}}[{{lsock.getName()}}]</a>
         </div>
       </td>
     </tr>

@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelzService } from '../channelz.service';
+import { channelDataHelper } from '../utils';
 
 @Component({
   selector: 'app-top-channels',
@@ -50,11 +51,17 @@ export class TopChannelsComponent implements OnInit {
       .subscribe((resp: any) => this.handleResponse(resp));
   }
 
+  channelDataHelperProxy(channelData: any): string {
+    return channelDataHelper(channelData);
+  }
+
   private handleResponse(resp: any): void {
-    this.topChannelsList = resp['channel'];
-    if (!resp['end']) {
+    this.topChannelsList = resp.getChannelList();
+    if (!resp.getEnd()) {
       const last = this.topChannelsList[this.topChannelsList.length - 1];
-      this.nextId = last['ref']['channelId'];
+      this.nextId = last.getRef().getChannelId();
+    } else {
+      this.nextId = null;
     }
   }
 }

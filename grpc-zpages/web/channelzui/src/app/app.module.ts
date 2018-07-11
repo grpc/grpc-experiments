@@ -28,7 +28,7 @@ import { SocketComponent } from './socket/socket.component';
 import { ChannelComponent } from './channel/channel.component';
 import { ChannelzService } from './channelz.service';
 import { HelpComponent } from './help/help.component';
-import { JsonPretty, AddrPretty } from './utils';
+import { AddrToString, DateFromProto } from './utils';
 import { ServerSocketsComponent } from './server-sockets/server-sockets.component';
 import { SubchannelComponent } from './subchannel/subchannel.component';
 import { TopChannelsComponent } from './top-channels/top-channels.component';
@@ -37,10 +37,10 @@ import { TopChannelsComponent } from './top-channels/top-channels.component';
 @NgModule({
   declarations: [
     AppComponent,
-    AddrPretty,
+    AddrToString,
+    DateFromProto,
     ChannelComponent,
     HelpComponent,
-    JsonPretty,
     ServerSocketsComponent,
     ServersComponent,
     SocketComponent,

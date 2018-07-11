@@ -11,7 +11,7 @@ Starting socket:
     </tr>
     <tr *ngFor="let s of sockets">
       <td>
-        <a routerLink="/channelz/socket/{{s['socketId']}}">{{s['socketId']}}[{{s['name']}}]</a>
+        <a routerLink="/channelz/socket/{{s.getSocketId()}}">{{s.getSocketId()}}[{{s.getName()}}]</a>
       </td>
     </tr>
   </table>

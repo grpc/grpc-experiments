@@ -10,33 +10,33 @@
     </tr>
     <tr>
       <td>ChannelRef</td>
-      <td><pre>{{channel['ref']['channelId']}}[{{channel['ref']['name']}}]</pre></td>
+      <td><pre>{{channel.getRef().getChannelId()}}[{{channel.getRef().getName()}}]</pre></td>
     </tr>
     <tr>
       <td>Data</td>
-      <td><pre>{{channel['data'] | jsonpretty}}</pre></td>
+      <td><pre>{{channelDataStr}}</pre></td>
     </tr>
     <tr>
       <td>Channels</td>
       <td>
-        <div *ngFor="let ref of channel['channelRef']">
-          <a routerLink="/channelz/channel/{{ref['channelId']}}">{{ref['channelId']}}[{{ref['name']}}]</a>,
+        <div *ngFor="let ref of channel.getChannelRefList()">
+          <a routerLink="/channelz/channel/{{ref.getChannelId()}}">{{ref.getChannelId()}}[{{ref.getName()}}]</a>,
         </div>
       </td>
     </tr>
     <tr>
       <td>Subchannels</td>
       <td>
-        <div *ngFor="let ref of channel['subchannelRef']">
-          <a routerLink="/channelz/subchannel/{{ref['subchannelId']}}">{{ref['subchannelId']}}[{{ref['name']}}]</a>,
+        <div *ngFor="let ref of channel.getSubchannelRefList()">
+          <a routerLink="/channelz/subchannel/{{ref.getSubchannelId()}}">{{ref.getSubchannelId()}}[{{ref.getName()}}]</a>,
         </div>
       </td>
     </tr>
     <tr>
       <td>Sockets</td>
       <td>
-        <div *ngFor="let ref of channel['socketRef']">
-          <a routerLink="/channelz/socket/{{ref['socketId']}}">{{ref['socketId']}}[{{ref.name}}]</a>,
+        <div *ngFor="let ref of channel.getSocketRefList()">
+          <a routerLink="/channelz/socket/{{ref.getSocketId()}}">{{ref.getSocketId()}}[{{ref.getName()}}]</a>,
         </div>
       </td>
     </tr>

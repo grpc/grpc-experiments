@@ -18,7 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelzService } from '../channelz.service';
-import { JsonPretty } from '../utils'
+import { DateFromProto, protoAnyToStringHelper } from '../utils'
 
 export class SocketOpt {
   constructor(public name: string, public value: string) {}
@@ -34,6 +34,7 @@ export class SocketComponent implements OnInit {
   socket: any;
   id: number;
   simplifiedData: any;
+  securiyStr: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -58,32 +59,65 @@ export class SocketComponent implements OnInit {
   }
 
   private handleResponse(socketResponse: any): void {
-    this.socket = socketResponse['socket'];
+    this.socket = socketResponse.getSocket();
     this.simplifiedData = this.simplifiedDataHelper();
+    this.securiyStr = this.securityHelper(this.socket.getSecurity());
   }
 
   /**
    * Returns a copy of the socket data, but with socket options removed.
    */
-  simplifiedDataHelper(): any {
-    if (this.socket['data'] == null) {
-      return {};
+  simplifiedDataHelper(): string {
+    const data = this.socket.getData();
+    if (data == null) {
+      return "undefined";
     }
-    const copy: any = JSON.parse(JSON.stringify(this.socket.data));
-    copy['option'] = null;
-    return copy;
+    return `Streams started: ${data.getStreamsStarted()}
+Streams succeeded: ${data.getStreamsSucceeded()}
+Streams failed: ${data.getStreamsFailed()}
+Messages sent: ${data.getMessagesSent()}
+Messages received: ${data.getMessagesReceived()}
+Keepalives sent: ${data.getKeepAlivesSent()}
+Last local stream created: ${DateFromProto.transform(data.getLastLocalStreamCreatedTimestamp())}
+Last remote stream created: ${DateFromProto.transform(data.getLastRemoteStreamCreatedTimestamp())}
+Last message sent: ${DateFromProto.transform(data.getLastMessageSentTimestamp())}
+Last message received: ${DateFromProto.transform(data.getLastMessageReceivedTimestamp())}
+Local flow control window: ${data.getLocalFlowControlWindow()}
+Remote flow control window: ${data.getRemoteFlowControlWindow()}
+`
+  }
+
+  securityHelper(security: any): string {
+    if (security == null) {
+      return "plaintext";
+    }
+    if (security.getTls() != null) {
+      const tls = security.getTls();
+      return `standard name: ${tls.getStandardName()}
+other name: ${tls.getOtherName()}
+local cert (base64): ${btoa(tls.getLocalCertificate())}
+remote cert (base64): ${btoa(tls.getRemoteCertificate())}`;
+    } else if (security.getOther() != null) {
+      const other = security.getOther();
+      return `name: ${other.getName()}
+value: ${protoAnyToStringHelper(other.getValue())}`;
+    } else {
+      return "plaintext"
+    }
   }
 
   socketOptions(): SocketOpt[] {
-    if (this.socket['data'] == null || this.socket['data']['option'] == null) {
+    const data = this.socket.getData();
+    if (data == null || data.getOptionList() == null) {
       return [];
     }
-    return this.socket['data']['option'].map((opt: any) => {
-      // value OR additional is set
-      if (opt['value']) {
-        return new SocketOpt(opt['name'], opt['value']);
+
+    return data.getOptionList().map((opt: any) => {
+      if (opt.getAdditional() != null) {
+        return new SocketOpt(
+          opt.getName(), protoAnyToStringHelper(opt.getAdditional()));
       } else {
-        return new SocketOpt(opt['name'], opt['additional']);
+        return new SocketOpt(opt.getName(), opt.getValue());
       }
     });
   }
