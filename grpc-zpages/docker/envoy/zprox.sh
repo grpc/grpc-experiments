@@ -43,10 +43,6 @@ static_resources:
             - name: local_service
               domains:
                 - "*"
-              cors:
-                allow_origin: ["*"]
-                allow_headers: "content-type, x-grpc-web, x-user-agent, xsrf-token"
-                allow_methods: "POST"
               routes:
               - match:
                   prefix: "/"
@@ -55,16 +51,12 @@ static_resources:
                      prefix_match: "application/grpc-web"
                 route:
                   cluster: local_service_grpc
-                  cors:
-                    enabled: true
               - match:
                   prefix: "/"
                 route:
                   cluster: local_service_web
           http_filters:
           - name: envoy.grpc_web
-            config: {}
-          - name: envoy.cors
             config: {}
           - name: envoy.router
           access_log:
