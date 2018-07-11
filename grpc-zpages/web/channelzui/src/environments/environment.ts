@@ -5,5 +5,4 @@
 
 export const environment = {
   production: false,
-  envoy_proxy_address: 'http://localhost:9900',
 };

@@ -18,7 +18,6 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../environments/environment"
 
 // The proto symbol is loaded by the web browser via a
 // <script src="..."></script> tag.
@@ -36,8 +35,10 @@ export class ChannelzService {
     this.xsrfMeta = {"grpc-channelz-v1-channelz-token": xsrfVal};
   }
 
+  // window.location.origin is the reverse proxy that both serves the
+  // app and performs grpc-web translation
   private client = new proto.grpc.channelz.v1.ChannelzClient(
-    environment.envoy_proxy_address);
+    window.location.origin);
 
   private functionToObserver(rpcMethod: any, req: any): Observable<any> {
     return new Observable(observer => {
