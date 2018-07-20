@@ -20,9 +20,18 @@ import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
 
-// The proto symbol is loaded by the web browser via a
-// <script src="..."></script> tag.
+// goog and proto are symbols provided by grpc generated code
+// In OSS, the grpc generated code is imported from a standalone .js file
+declare var goog: any;
 declare var proto: any;
+goog.require('proto.grpc.channelz.v1.ChannelzClient');
+goog.require('proto.grpc.channelz.v1.GetChannelRequest');
+goog.require('proto.grpc.channelz.v1.GetServerSocketsRequest');
+goog.require('proto.grpc.channelz.v1.GetServersRequest');
+goog.require('proto.grpc.channelz.v1.GetSocketRequest');
+goog.require('proto.grpc.channelz.v1.GetSubchannelRequest');
+goog.require('proto.grpc.channelz.v1.GetTopChannelsRequest');
+
 
 @Injectable()
 export class ChannelzService {

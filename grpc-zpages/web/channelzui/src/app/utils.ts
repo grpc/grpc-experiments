@@ -17,7 +17,14 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
+// goog and proto are symbols provided by grpc generated code
+// In OSS, the grpc generated code is imported from a standalone .js file
+declare var goog: any;
 declare var proto: any;
+goog.require('proto.grpc.channelz.v1.SocketOptionLinger');
+goog.require('proto.grpc.channelz.v1.SocketOptionTimeout');
+goog.require('proto.grpc.channelz.v1.SocketOptionTcpInfo');
+goog.require('proto.grpc.channelz.v1.ChannelConnectivityState.State');
 
 const protoAnyToStringHelpers = {
   'type.googleapis.com/grpc.channelz.v1.SocketOptionLinger': (protoAny: any) => {
