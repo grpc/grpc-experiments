@@ -70,7 +70,6 @@ const protoAnyToStringHelpers = {
 };
 
 export function protoAnyToStringHelper(packedAny: any): string {
-  //return protoAnyToString(packedAny);
   if (packedAny.getTypeUrl() in protoAnyToStringHelpers) {
     return protoAnyToStringHelpers[packedAny.getTypeUrl()](packedAny);
   } else {
