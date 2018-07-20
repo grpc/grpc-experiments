@@ -17,12 +17,77 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 
-declare var protoAnyToString: any;
-declare var protoEnumToString: any;
 declare var proto: any;
 
+const protoAnyToStringHelpers = {
+  'type.googleapis.com/grpc.channelz.v1.SocketOptionLinger': (protoAny: any) => {
+    const solinger = proto.grpc.channelz.v1.SocketOptionLinger.deserializeBinary(protoAny.getValue());
+    const duration = solinger.getDuration();
+    if ('undefined' === typeof duration) {
+      return "active: " + solinger.getActive();
+    }
+    return "active: " + solinger.getActive() + "\n" +
+      "seconds: " + duration.getSeconds() + "\n" +
+      "nanos: " + duration.getNanos() + "\n";
+  },
+  'type.googleapis.com/grpc.channelz.v1.SocketOptionTimeout': (protoAny: any) => {
+    const sotimeout = proto.grpc.channelz.v1.SocketOptionTimeout.deserializeBinary(protoAny.getValue());
+    return "seconds: " + sotimeout.getDuration().getSeconds() + "\n" +
+      "nanos: " + sotimeout.getDuration().getNanos() + "\n";
+  },
+  'type.googleapis.com/grpc.channelz.v1.SocketOptionTcpInfo': (protoAny: any) => {
+    const tcpi = proto.grpc.channelz.v1.SocketOptionTcpInfo.deserializeBinary(protoAny.getValue());
+    return "tcpi_state: " + tcpi.getTcpiState() + "\n" +
+    "tcpi_ca_state: " + tcpi.getTcpiCaState() + "\n" +
+    "tcpi_retransmits: " + tcpi.getTcpiRetransmits() + "\n" +
+    "tcpi_probes: " + tcpi.getTcpiProbes() + "\n" +
+    "tcpi_backoff: " + tcpi.getTcpiBackoff() + "\n" +
+    "tcpi_options: " + tcpi.getTcpiOptions() + "\n" +
+    "tcpi_snd_wscale: " + tcpi.getTcpiSndWscale() + "\n" +
+    "tcpi_rcv_wscale: " + tcpi.getTcpiRcvWscale() + "\n" +
+    "tcpi_rto: " + tcpi.getTcpiRto() + "\n" +
+    "tcpi_ato: " + tcpi.getTcpiAto() + "\n" +
+    "tcpi_snd_mss: " + tcpi.getTcpiSndMss() + "\n" +
+    "tcpi_rcv_mss: " + tcpi.getTcpiRcvMss() + "\n" +
+    "tcpi_unacked: " + tcpi.getTcpiUnacked() + "\n" +
+    "tcpi_sacked: " + tcpi.getTcpiSacked() + "\n" +
+    "tcpi_lost: " + tcpi.getTcpiLost() + "\n" +
+    "tcpi_retrans: " + tcpi.getTcpiRetrans() + "\n" +
+    "tcpi_fackets: " + tcpi.getTcpiFackets() + "\n" +
+    "tcpi_last_data_sent: " + tcpi.getTcpiLastDataSent() + "\n" +
+    "tcpi_last_ack_sent: " + tcpi.getTcpiLastAckSent() + "\n" +
+    "tcpi_last_data_recv: " + tcpi.getTcpiLastDataRecv() + "\n" +
+    "tcpi_last_ack_recv: " + tcpi.getTcpiLastAckRecv() + "\n" +
+    "tcpi_pmtu: " + tcpi.getTcpiPmtu() + "\n" +
+    "tcpi_rcv_ssthresh: " + tcpi.getTcpiRcvSsthresh() + "\n" +
+    "tcpi_rtt: " + tcpi.getTcpiRtt() + "\n" +
+    "tcpi_rttvar: " + tcpi.getTcpiRttvar() + "\n" +
+    "tcpi_snd_ssthresh: " + tcpi.getTcpiSndSsthresh() + "\n" +
+    "tcpi_snd_cwnd: " + tcpi.getTcpiSndCwnd() + "\n" +
+    "tcpi_advmss: " + tcpi.getTcpiAdvmss() + "\n" +
+    "tcpi_reordering: " + tcpi.getTcpiReordering() + "\n";
+  }
+};
+
 export function protoAnyToStringHelper(packedAny: any): string {
-  return protoAnyToString(packedAny);
+  //return protoAnyToString(packedAny);
+  if (packedAny.getTypeUrl() in protoAnyToStringHelpers) {
+    return protoAnyToStringHelpers[packedAny.getTypeUrl()](packedAny);
+  } else {
+    return "Unrecognized Any type: " + packedAny.getTypeUrl();
+  }
+}
+
+// Registers a handler that can take a google.protobuf.Any for the given
+// typeUrl and returns a human friendly string.
+export function registerProtoAnyToStringFn(
+  typeUrl: string,
+  fn: (protoAny: any) => string): void {
+  protoAnyToStringHelpers[typeUrl] = fn;
+}
+
+function protoEnumToString(enumClass, enumVal) {
+  return Object.keys(enumClass).find(k => enumClass[k] === enumVal);
 }
 
 export function channelDataHelper(channelData: any): string {
