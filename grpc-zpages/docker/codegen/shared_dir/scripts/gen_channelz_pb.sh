@@ -21,12 +21,12 @@ protoc -I=/github/grpc-proto/grpc/channelz/v1/ --plugin=protoc-gen-grpc-web=/git
 # Run closure compiler to produce a self contained .js file 
 mkdir -p "$SHARED_DIR"/gen_out/
 java \
-  -jar /github/grpc-web//closure-compiler.jar \
+  -jar /github/grpc-web/closure-compiler.jar \
   --js /workspace \
-  --js /github/grpc-web//javascript \
-  --js /github/grpc-web//net \
-  --js /github/grpc-web//third_party/closure-library \
-  --js /github/grpc-web//third_party/grpc/third_party/protobuf/js \
+  --js /github/grpc-web/javascript \
+  --js /github/grpc-web/net \
+  --js /github/grpc-web/third_party/closure-library \
+  --js /github/grpc-web/third_party/grpc/third_party/protobuf/js \
   --entry_point=goog:proto.grpc.channelz.v1.ChannelzClient \
   --entry_point=goog:proto.grpc.channelz.v1.SocketOptionTimeout \
   --entry_point=goog:proto.grpc.channelz.v1.SocketOptionLinger \

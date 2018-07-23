@@ -19,6 +19,6 @@ docker build -t channelz_grpc_web_prereqs ./prereqs/
 cd "$GRPC_ZPAGES_DIR"/docker
 docker build -t channelz_codegen codegen
 
-docker run --rm   -v "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir:/shared_dir/ channelz_codegen /shared_dir/scripts/gen_channelz_pb.sh
+docker run --rm -v "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir:/shared_dir/ channelz_codegen /shared_dir/scripts/gen_channelz_pb.sh
 
 mv "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir/gen_out/channelz.js "$GRPC_ZPAGES_DIR"/web/channelzui/src/assets/channelz.js
