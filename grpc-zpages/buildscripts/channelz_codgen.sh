@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 if [ "$#" -gt  1 ]; then
     echo "Usage: $0 [GRPC_PROTO_REPO_SHA]"
-    echo "GRPC_PROTO_REPO_SHA defaults to 'origin/master'"
+    echo "GRPC_PROTO_SHA defaults to 'origin/master'"
 fi
 
 # Check out a known good SHA for reproducibility
