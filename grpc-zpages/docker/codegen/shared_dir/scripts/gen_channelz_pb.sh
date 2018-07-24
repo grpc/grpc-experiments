@@ -1,7 +1,11 @@
 #!/bin/bash
 set -eu -o pipefail
 
-readonly GRPC_PROTO_SHA=91d19ac45f696816df5f1547cacaa201280cdc68
+if [ "$#" -ne  1 ]; then
+    echo "Usage: $0 GRPC_PROTO_REPO_SHA"
+fi
+
+readonly GRPC_PROTO_SHA="$1"
 readonly SHARED_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
 
 mkdir -p /github
