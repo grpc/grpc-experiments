@@ -2,7 +2,7 @@
 set -eu -o pipefail
 
 if [ "$#" -ne  1 ]; then
-    echo "Usage: $0 GRPC_PROTO_REPO_SHA"
+    echo "Usage: $0 GRPC_PROTO_SHA"
 fi
 
 readonly GRPC_PROTO_SHA="$1"
