@@ -72,5 +72,10 @@ work with version `5.8.0` of `npm`.
 To rebuild and copy the distributable files:
 
 ```bash
+# Pull the latest proto definitions from
+# https://github.com/grpc/grpc-proto
+$ buildscripts/channelz_codegen.sh
+
+# Rebuild the angular app
 $ buildscripts/update_angular.sh
 ```
