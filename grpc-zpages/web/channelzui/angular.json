@@ -23,7 +23,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": ["src/generated/channelz.js"]
           },
           "configurations": {
             "production": {

@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, Optional } from "@angular/core";
 import { Observable } from "rxjs";
-import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
 
-// goog and proto are symbols provided by grpc generated code
-// In OSS, the grpc generated code is imported from a standalone .js file
+// When building with angular CLI in OSS:
+//   The standalone channelz.js file provides a proto symbol with the
+//   client and message types. goog.require() is effectively a noop.
+// When building with closure compiler:
+//   goog.require() imports the client and message libraries
 declare var goog: any;
-declare var proto: any;
 goog.require('proto.grpc.channelz.v1.ChannelzClient');
 goog.require('proto.grpc.channelz.v1.GetChannelRequest');
 goog.require('proto.grpc.channelz.v1.GetServerSocketsRequest');
@@ -31,29 +32,34 @@ goog.require('proto.grpc.channelz.v1.GetServersRequest');
 goog.require('proto.grpc.channelz.v1.GetSocketRequest');
 goog.require('proto.grpc.channelz.v1.GetSubchannelRequest');
 goog.require('proto.grpc.channelz.v1.GetTopChannelsRequest');
-
+declare var proto: any;
 
 @Injectable()
 export class ChannelzService {
   xsrfMeta: {};
+  client: any;
 
-  constructor(private http: HttpClient) {
+  // Because this class is @Injectable, angular takes care of DI for parameters.
+  // This means we can not provide a default parameter value.
+  // The parameter is either injected or it is null.
+  constructor(@Optional() private grpcRemoteAddr:string) {
+    this.xsrfMeta = ChannelzService.genXsrfMeta();
+    this.client = new proto.grpc.channelz.v1.ChannelzClient(
+      grpcRemoteAddr == null ? environment.grpcRemoteAddr : grpcRemoteAddr);
+  }
+
+  private static genXsrfMeta(): any {
     const arr = new Int8Array(32); // 256 bits of entropy
     window.crypto.getRandomValues(arr);
     const xsrfVal = btoa(arr.toString());
     document.cookie = `grpc-channelz-v1-channelz-token=${xsrfVal};path=/`;
-    this.xsrfMeta = {"grpc-channelz-v1-channelz-token": xsrfVal};
+    return {"grpc-channelz-v1-channelz-token": xsrfVal};
   }
-
-  // window.location.origin is the reverse proxy that both serves the
-  // app and performs grpc-web translation
-  private client = new proto.grpc.channelz.v1.ChannelzClient(
-    environment.grpcRemoteAddr);
 
   private functionToObserver(rpcMethod: any, req: any): Observable<any> {
     return new Observable(observer => {
-      // To pass a method around as a parameter, the method must be bound
-      // to an instance of the object. In this case it is the client.
+      // To use a method passed around as a parameter, the method must be bound
+      // to an instance of the object.
       rpcMethod.bind(this.client)(req, this.xsrfMeta, function(err, response) {
         observer.next(response);
         observer.complete();

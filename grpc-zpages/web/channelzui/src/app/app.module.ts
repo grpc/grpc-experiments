@@ -20,7 +20,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ServersComponent } from './servers/servers.component';
 import { SocketComponent } from './socket/socket.component';
@@ -52,7 +51,6 @@ import { TopChannelsComponent } from './top-channels/top-channels.component';
     BrowserModule,
     CommonModule,
     FormsModule,
-    HttpClientModule,
   ],
   providers: [ChannelzService],
   bootstrap: [AppComponent]
