@@ -13,5 +13,4 @@ if [[ $(which ng) == "" ]]; then
   exit 1
 fi
 
-ng build --prod --build-optimizer --base-href=/dist_channelz/
-
+ng build --base-href=/dist_channelz/
