@@ -1,28 +1,30 @@
 #!/bin/bash
 set -eu -o pipefail
 
+readonly GRPC_PROTO_SHA=91d19ac45f696816df5f1547cacaa201280cdc68
 readonly SHARED_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
 
 mkdir -p /github
 cd /github/
 git clone https://github.com/grpc/grpc-proto.git
 cd /github/grpc-proto
-git checkout 91d19ac45f696816df5f1547cacaa201280cdc68
+git checkout "$GRPC_PROTO_SHA"
 
-mkdir -p /workspace/
+readonly WORKSPACE="/workspace"
+mkdir -p "$WORKSPACE"
 
 # Run protoc and generate .js for msg types
-protoc -I=/github/grpc-proto/grpc/channelz/v1/ --js_out=import_style=closure,binary:/workspace channelz.proto
-protoc -I=/github/grpc-web/third_party/grpc/third_party/protobuf/src/ --js_out=import_style=closure,binary:/workspace google/protobuf/any.proto google/protobuf/duration.proto google/protobuf/timestamp.proto google/protobuf/wrappers.proto
+protoc -I=/github/grpc-proto/grpc/channelz/v1/ --js_out=import_style=closure,binary:"$WORKSPACE" channelz.proto
+protoc -I=/github/grpc-web/third_party/grpc/third_party/protobuf/src/ --js_out=import_style=closure,binary:"$WORKSPACE" google/protobuf/any.proto google/protobuf/duration.proto google/protobuf/timestamp.proto google/protobuf/wrappers.proto
 
 # Run protoc with grpc-web plugin to generate client
-protoc -I=/github/grpc-proto/grpc/channelz/v1/ --plugin=protoc-gen-grpc-web=/github/grpc-web/javascript/net/grpc/web/protoc-gen-grpc-web  --grpc-web_out=out=channelz.grpc.pb.js,mode=grpcweb:/workspace channelz.proto
+protoc -I=/github/grpc-proto/grpc/channelz/v1/ --plugin=protoc-gen-grpc-web=/github/grpc-web/javascript/net/grpc/web/protoc-gen-grpc-web  --grpc-web_out=out=channelz.grpc.pb.js,mode=grpcweb:"$WORKSPACE" channelz.proto
 
 # Run closure compiler to produce a self contained .js file 
 mkdir -p "$SHARED_DIR"/gen_out/
 java \
   -jar /github/grpc-web/closure-compiler.jar \
-  --js /workspace \
+  --js "$WORKSPACE" \
   --js /github/grpc-web/javascript \
   --js /github/grpc-web/net \
   --js /github/grpc-web/third_party/closure-library \

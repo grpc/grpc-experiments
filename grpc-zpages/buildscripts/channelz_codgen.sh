@@ -1,19 +1,21 @@
 #!/bin/bash
 set -eu -o pipefail
 
-readonly GRPC_ZPAGES_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
-readonly GRPC_WEB_DIR="$GRPC_ZPAGES_DIR"/buildscripts/github/grpc-web
+# Check out a known good SHA for reproducibility
+readonly GRPC_WEB_SHA=6357fa78f36d2e08636612f281250b31f28ae6ec
 
-if [[ ! -d "$GRPC_WEB_DIR" ]]; then
-  mkdir -p "$GRPC_ZPAGES_DIR"/buildscripts/github
-  cd "$GRPC_ZPAGES_DIR"/buildscripts/github
+readonly GRPC_ZPAGES_DIR="$(cd "$(dirname "$0")"/.. && pwd)"
+readonly GITHUB_DIR="$GRPC_ZPAGES_DIR"/buildscripts/github/
+
+if [[ ! -d "$GITHUB_DIR"/grpc-web ]]; then
+  mkdir -p "$GITHUB_DIR"
+  cd "$GITHUB_DIR"
   git clone https://github.com/grpc/grpc-web.git
-  cd "$GRPC_WEB_DIR"
-  # Check out a known good SHA for reproducibility
-  git checkout 6357fa78f36d2e08636612f281250b31f28ae6ec
+  cd grpc-web/
+  git checkout "$GRPC_WEB_SHA"
 fi
 
-cd "$GRPC_WEB_DIR"/net/grpc/gateway/docker
+cd "$GITHUB_DIR"/grpc-web//net/grpc/gateway/docker
 docker build -t channelz_grpc_web_prereqs ./prereqs/
 
 cd "$GRPC_ZPAGES_DIR"/docker
