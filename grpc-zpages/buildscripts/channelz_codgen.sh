@@ -29,4 +29,4 @@ docker build -t channelz_codegen codegen
 
 exec docker run --rm -v "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir:/shared_dir/ channelz_codegen bash -c "function fixFiles() { chown -R $(id -u):$(id -g) /shared_dir; }; trap fixFiles EXIT; /shared_dir/scripts/gen_channelz_pb.sh $GRPC_PROTO_SHA"
 
-mv "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir/gen_out/channelz.js "$GRPC_ZPAGES_DIR"/web/channelzui/src/assets/channelz.js
+mv "$GRPC_ZPAGES_DIR"/docker/codegen/shared_dir/gen_out/channelz.js "$GRPC_ZPAGES_DIR"/web/channelzui/src/generated/channelz.js

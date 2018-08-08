@@ -5,5 +5,7 @@
 
 export const environment = {
   production: false,
+  // window.location.origin is the reverse proxy that both serves the
+  // app and performs grpc-web translation
   grpcRemoteAddr: window.location.origin,
 };
