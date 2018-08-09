@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Injectable, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../environments/environment";
 
@@ -39,13 +39,10 @@ export class ChannelzService {
   xsrfMeta: {};
   client: any;
 
-  // Because this class is @Injectable, angular takes care of DI for parameters.
-  // This means we can not provide a default parameter value.
-  // The parameter is either injected or it is null.
-  constructor(@Optional() private grpcRemoteAddr:string) {
+  constructor() {
     this.xsrfMeta = ChannelzService.genXsrfMeta();
     this.client = new proto.grpc.channelz.v1.ChannelzClient(
-      grpcRemoteAddr == null ? environment.grpcRemoteAddr : grpcRemoteAddr);
+      environment.grpcRemoteAddr);
   }
 
   private static genXsrfMeta(): any {
