@@ -929,3 +929,6 @@ proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.setTcpiRtt=function(a){jspb
 proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.getTcpiSndSsthresh=function(){return jspb.Message.getFieldWithDefault(this,26,0)};proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.setTcpiSndSsthresh=function(a){jspb.Message.setProto3IntField(this,26,a)};proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.getTcpiSndCwnd=function(){return jspb.Message.getFieldWithDefault(this,27,0)};
 proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.setTcpiSndCwnd=function(a){jspb.Message.setProto3IntField(this,27,a)};proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.getTcpiAdvmss=function(){return jspb.Message.getFieldWithDefault(this,28,0)};proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.setTcpiAdvmss=function(a){jspb.Message.setProto3IntField(this,28,a)};
 proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.getTcpiReordering=function(){return jspb.Message.getFieldWithDefault(this,29,0)};proto.grpc.channelz.v1.SocketOptionTcpInfo.prototype.setTcpiReordering=function(a){jspb.Message.setProto3IntField(this,29,a)};
+
+;
+//# sourceMappingURL=scripts.js.map
