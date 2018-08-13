@@ -75,7 +75,8 @@ static_resources:
                     cookie = headers:get("cookie")
                     -- The token value is a base64 encoded binary and may have trailing = characters for padding
                     -- This is written as two statements because of lua's str matching limitations
-                    xsrf_cookie = string.match(headers:get("cookie") or "", esc_hyphens("^$GDEBUG_TOKEN_NAME=(%w+=*)")) or string.match(headers:get("cookie") or "", esc_hyphens("; $GDEBUG_TOKEN_NAME=(%w+=*)"))
+                    cookies = headers:get("cookie") or ""
+                    xsrf_cookie = string.match(cookies, esc_hyphens("^$GDEBUG_TOKEN_NAME=(%w+=*)")) or string.match(cookies, esc_hyphens("; $GDEBUG_TOKEN_NAME=(%w+=*)"))
                     -- ~= means "not equals" in lua
                     if xsrf_header == nil or xsrf_header == "" or xsrf_cookie == nil or xsrf_cookie == "" or xsrf_header ~= xsrf_cookie then
                       request_handle:logInfo("rejecting request: xsrf token not set")
