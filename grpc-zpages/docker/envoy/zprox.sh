@@ -71,7 +71,11 @@ static_resources:
                   content_type = headers:get("content-type")
                   if content_type and string.find(content_type, esc_hyphens("application/grpc-web")) then
                     xsrf_header = headers:get("$GDEBUG_TOKEN_NAME")
-                    xsrf_cookie = string.match(headers:get("cookie") or "", esc_hyphens("$GDEBUG_TOKEN_NAME=(%w+)"))
+                    -- There can be only one cookie header: https://tools.ietf.org/html/rfc6265#section-5.4
+                    cookie = headers:get("cookie")
+                    -- The token value is a base64 encoded binary and may have trailing = characters for padding
+                    -- This is written as two statements because of lua's str matching limitations
+                    xsrf_cookie = string.match(headers:get("cookie") or "", esc_hyphens("^$GDEBUG_TOKEN_NAME=(%w+=*)")) or string.match(headers:get("cookie") or "", esc_hyphens("; $GDEBUG_TOKEN_NAME=(%w+=*)"))
                     -- ~= means "not equals" in lua
                     if xsrf_header == nil or xsrf_header == "" or xsrf_cookie == nil or xsrf_cookie == "" or xsrf_header ~= xsrf_cookie then
                       request_handle:logInfo("rejecting request: xsrf token not set")
