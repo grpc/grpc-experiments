@@ -23,6 +23,8 @@ readonly GRPC_PORT=$3
 readonly ASSETS_ADDR=$4
 readonly ASSETS_PORT=$5
 
+readonly GDEBUG_TOKEN_NAME="gdebug-xsrf-token"
+
 cat > "$TEMP" <<TERMINATOR
 static_resources:
   listeners:
@@ -56,6 +58,31 @@ static_resources:
                 route:
                   cluster: local_service_web
           http_filters:
+          - name: envoy.lua
+            config:
+              inline_code: |
+                function envoy_on_request(request_handle)
+                  -- hyphens are special characters in lua search patterns and must be escaped with a %
+                  function esc_hyphens(s)
+                    result, _ = string.gsub(s, "%-", "%%%-")
+                    return result
+                  end
+                  headers = request_handle:headers()
+                  content_type = headers:get("content-type")
+                  if content_type and string.find(content_type, esc_hyphens("application/grpc-web")) then
+                    xsrf_header = headers:get("$GDEBUG_TOKEN_NAME")
+                    -- There can be only one cookie header: https://tools.ietf.org/html/rfc6265#section-5.4
+                    cookies = headers:get("cookie") or ""
+                    -- The token value is a base64 encoded binary and may have trailing = characters for padding
+                    -- This is written as two statements because of lua's str matching limitations
+                    xsrf_cookie = string.match(cookies, esc_hyphens("^$GDEBUG_TOKEN_NAME=(%w+=*)")) or string.match(cookies, esc_hyphens("; $GDEBUG_TOKEN_NAME=(%w+=*)"))
+                    -- ~= means "not equals" in lua
+                    if xsrf_header == nil or xsrf_header == "" or xsrf_cookie == nil or xsrf_cookie == "" or xsrf_header ~= xsrf_cookie then
+                      request_handle:logInfo("rejecting request: xsrf token not set")
+                      request_handle:respond({[":status"] = "401"}, "$GDEBUG_TOKEN_NAME must be set")
+                    end
+                  end
+                end
           - name: envoy.grpc_web
             config: {}
           - name: envoy.router

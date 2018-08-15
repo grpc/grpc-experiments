@@ -49,8 +49,8 @@ export class ChannelzService {
     const arr = new Int8Array(32); // 256 bits of entropy
     window.crypto.getRandomValues(arr);
     const xsrfVal = btoa(arr.toString());
-    document.cookie = `grpc-channelz-v1-channelz-token=${xsrfVal};path=/`;
-    return {"grpc-channelz-v1-channelz-token": xsrfVal};
+    document.cookie = `gdebug-xsrf-token=${xsrfVal};path=/`;
+    return {"gdebug-xsrf-token": xsrfVal};
   }
 
   private functionToObserver(rpcMethod: any, req: any): Observable<any> {
