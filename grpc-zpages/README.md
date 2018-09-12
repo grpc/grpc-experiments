@@ -54,7 +54,6 @@ at `127.0.0.1:50051`. The envoy proxy listens on port `9900`.
 
 ```bash
 # Make sure 'docker-compose' and 'docker' are both available
-$ cd docker
 $ ./docker/start_docker.sh 9900 127.0.0.1 50051
 ```
 
