@@ -12,7 +12,7 @@ fi
 
 readonly DOCKER_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-TEMP=$(mktemp -p $DOCKER_DIR --suffix=.yaml)
+TEMP=$(mktemp $DOCKER_DIR/temp.yaml)
 function finish {
   rm "$TEMP"
 }
