@@ -40,6 +40,26 @@
         </div>
       </td>
     </tr>
+    <tr>
+      <td>Channel trace summary</td>
+      <td><pre>{{traceSummary}}</pre></td>
+    </tr>
+    <tr>
+      <td>Channel trace events</td>
+      <td>
+        <div *ngIf="!traceEvents"><pre>No events recorded</pre></div>
+        <div *ngFor="let evt of traceEvents">
+          <pre>{{evt.combinedDetails}}</pre>
+          <div *ngIf="evt.channelRef">
+            <pre> <a routerLink="/channelz/channel/{{evt.channelRef.getChannelId()}}">{{evt.channelRef.getName()}}</a></pre>
+          </div>
+          <div *ngIf="evt.subchannelRef">
+            <pre> <a routerLink="/channelz/subchannel/{{evt.subchannelRef.getSubchannelId()}}">{{evt.subchannelRef.getName()}}</a></pre>
+          </div>
+          </br>
+        </div>
+      </td>
+    </tr>
   </table>
   </div>
   <div *ngIf="!channel && id">

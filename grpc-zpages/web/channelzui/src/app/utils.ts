@@ -87,6 +87,22 @@ export function protoAnyToStringHelper(packedAny: any): string {
   }
 }
 
+export class TraceEvent {
+  constructor(
+    public combinedDetails: string,
+    public channelRef: any,
+    public subchannelRef: any) {}
+}
+
+export function traceEventHelper(events: any[]): TraceEvent[] {
+  return events.map((evt: any) => {
+    return new TraceEvent(
+      channelTraceEventData(evt),
+      evt.getChannelRef(),
+      evt.getSubchannelRef()
+    )});
+}
+
 // Registers a handler that can take a google.protobuf.Any for the given
 // typeUrl and returns a human friendly string.
 export function registerProtoAnyToStringFn(
@@ -97,6 +113,26 @@ export function registerProtoAnyToStringFn(
 
 function protoEnumToString(enumClass, enumVal) {
   return Object.keys(enumClass).find(k => enumClass[k] === enumVal);
+}
+
+export function channelTraceSummary(ct: any): string {
+  if (ct == null) {
+    return "None"
+  }
+  return `events logged: ${ct.getNumEventsLogged()}
+channel creation timestamp: ${DateFromProto.transform(ct.getCreationTimestamp())}`;
+}
+
+export function channelTraceEventData(evt: any): string {
+  if (evt == null) {
+    return "undefined"
+  }
+  const timestamp = DateFromProto.transform(evt.getTimestamp());
+  const description = evt.getDescription();
+  const sev = protoEnumToString(
+    proto.grpc.channelz.v1.ChannelTraceEvent.Severity,
+    evt.getSeverity());
+  return `${timestamp} ${sev} ${description}`;
 }
 
 export function channelDataHelper(channelData: any): string {

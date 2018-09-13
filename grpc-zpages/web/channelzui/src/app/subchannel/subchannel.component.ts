@@ -18,7 +18,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelzService } from '../channelz.service';
-import { channelDataHelper } from '../utils';
+import {
+  channelDataHelper, channelTraceSummary,
+  TraceEvent,
+  traceEventHelper
+} from '../utils';
 
 @Component({
   selector: 'app-subchannel',
@@ -30,6 +34,8 @@ export class SubchannelComponent implements OnInit {
   subchannel: any;
   id: number;
   subchannelDataStr: string;
+  traceSummary: string;
+  traceEvents: TraceEvent[] = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,5 +62,10 @@ export class SubchannelComponent implements OnInit {
   private handleResponse(resp: any): void {
     this.subchannel = resp.getSubchannel();
     this.subchannelDataStr = channelDataHelper(this.subchannel.getData());
+    const channelTrace = this.subchannel.getData().getTrace();
+    if (channelTrace != null && channelTrace.getEvents() != null) {
+      this.traceSummary = channelTraceSummary(channelTrace);
+      this.traceEvents = traceEventHelper(channelTrace.getEvents());
+    }
   }
 }
