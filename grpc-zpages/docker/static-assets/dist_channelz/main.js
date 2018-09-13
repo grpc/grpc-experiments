@@ -297,7 +297,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h3>Showing channel:</h3>\n<input #textbox type=\"text\" [(ngModel)]=\"enteredData\" (keyup.enter)=\"processEntry()\" required>\n<button (click)=\"processEntry()\">Refresh</button>\n<div>\n  <div *ngIf=\"channel\">\n  <table>\n    <tr>\n      <th>Field</th>\n      <th>Value</th>\n    </tr>\n    <tr>\n      <td>ChannelRef</td>\n      <td><pre>{{channel.getRef().getChannelId()}}[{{channel.getRef().getName()}}]</pre></td>\n    </tr>\n    <tr>\n      <td>Data</td>\n      <td><pre>{{channelDataStr}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channels</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getChannelRefList()\">\n          <a routerLink=\"/channelz/channel/{{ref.getChannelId()}}\">{{ref.getChannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Subchannels</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getSubchannelRefList()\">\n          <a routerLink=\"/channelz/subchannel/{{ref.getSubchannelId()}}\">{{ref.getSubchannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Sockets</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getSocketRefList()\">\n          <a routerLink=\"/channelz/socket/{{ref.getSocketId()}}\">{{ref.getSocketId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n  </table>\n  </div>\n  <div *ngIf=\"!channel && id\">\n    <p>Channel does not exist</p>\n  </div>\n</div>\n"
+module.exports = "<h3>Showing channel:</h3>\n<input #textbox type=\"text\" [(ngModel)]=\"enteredData\" (keyup.enter)=\"processEntry()\" required>\n<button (click)=\"processEntry()\">Refresh</button>\n<div>\n  <div *ngIf=\"channel\">\n  <table>\n    <tr>\n      <th>Field</th>\n      <th>Value</th>\n    </tr>\n    <tr>\n      <td>ChannelRef</td>\n      <td><pre>{{channel.getRef().getChannelId()}}[{{channel.getRef().getName()}}]</pre></td>\n    </tr>\n    <tr>\n      <td>Data</td>\n      <td><pre>{{channelDataStr}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channels</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getChannelRefList()\">\n          <a routerLink=\"/channelz/channel/{{ref.getChannelId()}}\">{{ref.getChannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Subchannels</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getSubchannelRefList()\">\n          <a routerLink=\"/channelz/subchannel/{{ref.getSubchannelId()}}\">{{ref.getSubchannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Sockets</td>\n      <td>\n        <div *ngFor=\"let ref of channel.getSocketRefList()\">\n          <a routerLink=\"/channelz/socket/{{ref.getSocketId()}}\">{{ref.getSocketId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Channel trace summary</td>\n      <td><pre>{{traceSummary}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channel trace events</td>\n      <td>\n        <div *ngIf=\"!traceEvents\"><pre>No events recorded</pre></div>\n        <div *ngFor=\"let evt of traceEvents\">\n          <pre>{{evt.combinedDetails}}</pre>\n          <div *ngIf=\"evt.channelRef\">\n            <pre> <a routerLink=\"/channelz/channel/{{evt.channelRef.getChannelId()}}\">{{evt.channelRef.getName()}}</a></pre>\n          </div>\n          <div *ngIf=\"evt.subchannelRef\">\n            <pre> <a routerLink=\"/channelz/subchannel/{{evt.subchannelRef.getSubchannelId()}}\">{{evt.subchannelRef.getName()}}</a></pre>\n          </div>\n        </div>\n      </td>\n    </tr>\n  </table>\n  </div>\n  <div *ngIf=\"!channel && id\">\n    <p>Channel does not exist</p>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -351,6 +351,7 @@ var ChannelComponent = /** @class */ (function () {
         this.channelzService = channelzService;
         this.enteredData = "0";
         this.id = 0;
+        this.traceEvents = null;
     }
     ChannelComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -371,6 +372,11 @@ var ChannelComponent = /** @class */ (function () {
     ChannelComponent.prototype.handleResponse = function (resp) {
         this.channel = resp.getChannel();
         this.channelDataStr = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["channelDataHelper"])(this.channel.getData());
+        var channelTrace = this.channel.getData().getTrace();
+        if (channelTrace != null && channelTrace.getEventsList() != null) {
+            this.traceSummary = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["channelTraceSummary"])(channelTrace);
+            this.traceEvents = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["traceEventHelper"])(channelTrace.getEventsList());
+        }
     };
     ChannelComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -983,7 +989,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h3>Showing subchannel:</h3>\n<input #textbox type=\"text\" [(ngModel)]=\"enteredData\" (keyup.enter)=\"processEntry()\" required>\n<button (click)=\"processEntry()\">Refresh</button>\n<div>\n  <div *ngIf=\"subchannel\">\n  <table>\n    <tr>\n      <th>Field</th>\n      <th>Value</th>\n    </tr>\n    <tr>\n      <td>SubchannelRef</td>\n      <td><pre>{{subchannel.getRef().getSubchannelId()}}[{{subchannel.getRef().getName()}}]</pre></td>\n    </tr>\n    <tr>\n      <td>Data</td>\n      <td><pre>{{subchannelDataStr}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channels</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getChannelRefList()\">\n          <a routerLink=\"/channelz/channel/{{ref.getChannelId()}}\">{{ref.getChannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Subchannels</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getSubchannelRefList()\">\n          <a routerLink=\"/channelz/subchannel/{{ref.getChannelId()}}\">{{ref.getSubchannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Sockets</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getSocketRefList()\">\n          <a routerLink=\"/channelz/socket/{{ref.getSocketId()}}\">{{ref.getSocketId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n  </table>\n  </div>\n  <div *ngIf=\"!subchannel && id\">\n    <p>Subchannel does not exist</p>\n  </div>\n</div>\n"
+module.exports = "<h3>Showing subchannel:</h3>\n<input #textbox type=\"text\" [(ngModel)]=\"enteredData\" (keyup.enter)=\"processEntry()\" required>\n<button (click)=\"processEntry()\">Refresh</button>\n<div>\n  <div *ngIf=\"subchannel\">\n  <table>\n    <tr>\n      <th>Field</th>\n      <th>Value</th>\n    </tr>\n    <tr>\n      <td>SubchannelRef</td>\n      <td><pre>{{subchannel.getRef().getSubchannelId()}}[{{subchannel.getRef().getName()}}]</pre></td>\n    </tr>\n    <tr>\n      <td>Data</td>\n      <td><pre>{{subchannelDataStr}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channels</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getChannelRefList()\">\n          <a routerLink=\"/channelz/channel/{{ref.getChannelId()}}\">{{ref.getChannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Subchannels</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getSubchannelRefList()\">\n          <a routerLink=\"/channelz/subchannel/{{ref.getChannelId()}}\">{{ref.getSubchannelId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Sockets</td>\n      <td>\n        <div *ngFor=\"let ref of subchannel.getSocketRefList()\">\n          <a routerLink=\"/channelz/socket/{{ref.getSocketId()}}\">{{ref.getSocketId()}}[{{ref.getName()}}]</a>,\n        </div>\n      </td>\n    </tr>\n    <tr>\n      <td>Channel trace summary</td>\n      <td><pre>{{traceSummary}}</pre></td>\n    </tr>\n    <tr>\n      <td>Channel trace events</td>\n      <td>\n        <div *ngIf=\"!traceEvents\"><pre>No events recorded</pre></div>\n        <div *ngFor=\"let evt of traceEvents\">\n          <pre>{{evt.combinedDetails}}</pre>\n          <div *ngIf=\"evt.channelRef\">\n            <pre> <a routerLink=\"/channelz/channel/{{evt.channelRef.getChannelId()}}\">{{evt.channelRef.getName()}}</a></pre>\n          </div>\n          <div *ngIf=\"evt.subchannelRef\">\n            <pre> <a routerLink=\"/channelz/subchannel/{{evt.subchannelRef.getSubchannelId()}}\">{{evt.subchannelRef.getName()}}</a></pre>\n          </div>\n        </div>\n      </td>\n    </tr>\n  </table>\n  </div>\n  <div *ngIf=\"!subchannel && id\">\n    <p>Subchannel does not exist</p>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -1035,6 +1041,7 @@ var SubchannelComponent = /** @class */ (function () {
         this.route = route;
         this.router = router;
         this.channelzService = channelzService;
+        this.traceEvents = null;
     }
     SubchannelComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -1055,6 +1062,11 @@ var SubchannelComponent = /** @class */ (function () {
     SubchannelComponent.prototype.handleResponse = function (resp) {
         this.subchannel = resp.getSubchannel();
         this.subchannelDataStr = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["channelDataHelper"])(this.subchannel.getData());
+        var channelTrace = this.subchannel.getData().getTrace();
+        if (channelTrace != null && channelTrace.getEvents() != null) {
+            this.traceSummary = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["channelTraceSummary"])(channelTrace);
+            this.traceEvents = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["traceEventHelper"])(channelTrace.getEvents());
+        }
     };
     SubchannelComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -1194,13 +1206,18 @@ var TopChannelsComponent = /** @class */ (function () {
 /*!**************************!*\
   !*** ./src/app/utils.ts ***!
   \**************************/
-/*! exports provided: protoAnyToStringHelper, registerProtoAnyToStringFn, channelDataHelper, DateFromProto, AddrToString */
+/*! exports provided: protoAnyToStringHelper, TraceEvent, traceEventHelper, registerProtoAnyToStringFn, protoEnumToString, channelTraceSummary, channelTraceEventData, channelDataHelper, DateFromProto, AddrToString */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "protoAnyToStringHelper", function() { return protoAnyToStringHelper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TraceEvent", function() { return TraceEvent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "traceEventHelper", function() { return traceEventHelper; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerProtoAnyToStringFn", function() { return registerProtoAnyToStringFn; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "protoEnumToString", function() { return protoEnumToString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "channelTraceSummary", function() { return channelTraceSummary; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "channelTraceEventData", function() { return channelTraceEventData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "channelDataHelper", function() { return channelDataHelper; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DateFromProto", function() { return DateFromProto; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddrToString", function() { return AddrToString; });
@@ -1289,6 +1306,20 @@ function protoAnyToStringHelper(packedAny) {
         return "Unrecognized Any type: " + packedAny.getTypeUrl();
     }
 }
+var TraceEvent = /** @class */ (function () {
+    function TraceEvent(combinedDetails, channelRef, subchannelRef) {
+        this.combinedDetails = combinedDetails;
+        this.channelRef = channelRef;
+        this.subchannelRef = subchannelRef;
+    }
+    return TraceEvent;
+}());
+
+function traceEventHelper(events) {
+    return events.map(function (evt) {
+        return new TraceEvent(channelTraceEventData(evt), evt.getChannelRef(), evt.getSubchannelRef());
+    });
+}
 // Registers a handler that can take a google.protobuf.Any for the given
 // typeUrl and returns a human friendly string.
 function registerProtoAnyToStringFn(typeUrl, fn) {
@@ -1296,6 +1327,21 @@ function registerProtoAnyToStringFn(typeUrl, fn) {
 }
 function protoEnumToString(enumClass, enumVal) {
     return Object.keys(enumClass).find(function (k) { return enumClass[k] === enumVal; });
+}
+function channelTraceSummary(ct) {
+    if (ct == null) {
+        return "None";
+    }
+    return "events logged: " + ct.getNumEventsLogged() + "\nchannel creation timestamp: " + DateFromProto.transform(ct.getCreationTimestamp());
+}
+function channelTraceEventData(evt) {
+    if (evt == null) {
+        return "undefined";
+    }
+    var timestamp = DateFromProto.transform(evt.getTimestamp());
+    var description = evt.getDescription();
+    var sev = protoEnumToString(proto.grpc.channelz.v1.ChannelTraceEvent.Severity, evt.getSeverity());
+    return timestamp + " " + sev + " " + description;
 }
 function channelDataHelper(channelData) {
     return "state: " + protoEnumToString(proto.grpc.channelz.v1.ChannelConnectivityState.State, channelData.getState().getState()) + "\ntarget: " + channelData.getTarget() + "\ncalls started: " + channelData.getCallsStarted() + "\ncalls succeeded: " + channelData.getCallsSucceeded() + "\ncalls failed: " + channelData.getCallsFailed() + "\nlast call started: " + DateFromProto.transform(channelData.getLastCallStartedTimestamp());
@@ -1431,7 +1477,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /usr/local/google/home/spencerfang/git/grpc-experiments/grpc-zpages/web/channelzui/src/main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /home/spencerfang/git/grpc-experiments/grpc-zpages/web/channelzui/src/main.ts */"./src/main.ts");
 
 
 /***/ })
