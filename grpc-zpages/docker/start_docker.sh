@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -exu -o pipefail
+set -eu -o pipefail
+
 
 if [ "$#" -ne  3 ]; then
     echo "Usage: $0 localport grpcaddr grpcport"
@@ -12,7 +13,14 @@ fi
 
 readonly DOCKER_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-TEMP=$(mktemp $DOCKER_DIR/temp.yaml)
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;TEMP=$(mktemp -p $DOCKER_DIR --suffix=.yaml);;
+    Darwin*)    machine=Mac;TEMP=$(mktemp $DOCKER_DIR/temp.yaml);;
+esac
+# echo ${TEMP}
+
 function finish {
   rm "$TEMP"
 }
