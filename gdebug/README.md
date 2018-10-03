@@ -69,6 +69,12 @@ docker directory.
 `npm` is required to be on your `PATH`. This code has been verified to
 work with version `5.8.0` of `npm`.
 
+If this is your first time building the app:
+```bash
+cd web/channelzui/
+npm install
+```
+
 To rebuild and copy the distributable files:
 
 ```bash
