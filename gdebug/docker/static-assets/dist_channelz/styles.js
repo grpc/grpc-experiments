@@ -539,7 +539,7 @@ if(false) {}
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /usr/local/google/home/spencerfang/git/grpc-experiments/grpc-zpages/web/channelzui/src/styles.css */"./src/styles.css");
+module.exports = __webpack_require__(/*! /home/spencerfang/git/grpc-experiments/gdebug/web/channelzui/src/styles.css */"./src/styles.css");
 
 
 /***/ })
