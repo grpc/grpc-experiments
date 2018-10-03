@@ -5472,7 +5472,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /usr/local/google/home/spencerfang/git/grpc-experiments/grpc-zpages/web/channelzui/src/polyfills.ts */"./src/polyfills.ts");
+module.exports = __webpack_require__(/*! /home/spencerfang/git/grpc-experiments/gdebug/web/channelzui/src/polyfills.ts */"./src/polyfills.ts");
 
 
 /***/ })
