@@ -12,12 +12,6 @@ fi
 
 readonly DOCKER_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-TEMP=$(mktemp -p $DOCKER_DIR --suffix=.yaml)
-function finish {
-  rm "$TEMP"
-}
-trap finish EXIT
-
 readonly ENVOY_PORT=$1
 readonly GRPC_ADDR=$2
 readonly GRPC_PORT=$3
