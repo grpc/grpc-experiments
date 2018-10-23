@@ -17,7 +17,7 @@ readonly GRPC_ADDR=$2
 readonly GRPC_PORT=$3
 readonly ASSETS_PORT="8080"
 
-CONFIG="version: '2'
+readonly CONFIG="version: '2'
 services:
   front-envoy:
     build:
