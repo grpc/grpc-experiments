@@ -34,7 +34,7 @@ services:
       # The host+port for the static assets server
       - ASSETS_HOST=127.0.0.1
       - ASSETS_PORT=$ASSETS_PORT
-    mem_limit: 1000000000
+    mem_limit: '1000000000'
     network_mode: 'host'
   back-static-assets:
     build:
@@ -46,7 +46,7 @@ services:
       # Make the port availble to linked dockers but no need
       # to forward to host machine.
       - '$ASSETS_PORT:$ASSETS_PORT'
-    mem_limit: 1000000000"
+    mem_limit: '1000000000'"
 
 cd $DOCKER_DIR
 echo "$CONFIG" | docker-compose -f - up --build
