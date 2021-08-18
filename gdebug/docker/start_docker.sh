@@ -23,9 +23,6 @@ services:
     build:
       context: ./envoy/
       dockerfile: Dockerfile
-    ports:
-      # Forward host port to docker
-      - '$ENVOY_PORT:$ENVOY_PORT'
     environment:
       - GRPC_HOST=$GRPC_ADDR
       - GRPC_PORT=$GRPC_PORT
